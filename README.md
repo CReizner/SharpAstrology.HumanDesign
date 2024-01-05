@@ -10,7 +10,7 @@ This package is part of the SharpAstrology project. It provides all the tools to
 dotnet add package SharpAstrology.HumanDesign
 ```
 
-## Abhängigkeiten
+## Dependencies
 
 The project uses [SharpAstrology.Base](https://github.com/CReizner/SharpAstrology.Base).
 Include the [SharpAstrology.SwissEph](https://github.com/CReizner/SharpAstrology.SwissEph) package, if you don't want to implement IEphemerides yourself. Be aware of the
