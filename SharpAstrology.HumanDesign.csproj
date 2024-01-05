@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net8.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <ItemGroup>
+      <ProjectReference Include="..\SharpAstrology.Base\SharpAstrology.Base.csproj" />
+    </ItemGroup>
+
+    <ItemGroup>
+      <None Update="LICENCE.md">
+        <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      </None>
+    </ItemGroup>
+
+    <PropertyGroup>
+        <PackageId>SharpAstrology.HumanDesign</PackageId>
+        <PackageTags>Astrology, Human Design</PackageTags>
+        <Version>1.0.0</Version>
+        <Authors>Christian Reizner</Authors>
+        <IsPackable>true</IsPackable>
+    </PropertyGroup>
+
+</Project>
