@@ -1,5 +1,19 @@
 # SharpAstrology.HumanDesign - A SharpAstrology package for the Human Design system
 
+## About
+
+This package is part of the SharpAstrology project. It provides all the tools to calculate the common Human Design Body Graph.
+
+## Install
+
+```
+dotnet add package SharpAstrology.HumanDesign
+```
+
+## Abhängigkeiten
+
+- [Dependency1](https://www.nuget.org/packages/SharpAstrology.Base)
+
 ## Examples
 
 ### How to get chart information from a point in time?
@@ -9,7 +23,8 @@ using SharpAstrology.Enums;
 using SharpAstrology.Ephemerides;
 using SharpAstrology.Interfaces;
 
-// Using the IEphemerides implementation from SharpAstrology.SwissEph
+// Using the IEphemerides implementation from SharpAstrology.SwissEph.
+// Use swiss eph files or jpl files for more accuracy so that the results are in alignment with online HD chart calculators.
 var ephemeridesService = new SwissEphemeridesService(ephType: EphType.Moshier);
 using IEphemerides eph = ephemeridesService.CreateContext();
 
