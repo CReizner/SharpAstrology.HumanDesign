@@ -12,7 +12,13 @@ dotnet add package SharpAstrology.HumanDesign
 
 ## Abhängigkeiten
 
-- [Dependency1](https://www.nuget.org/packages/SharpAstrology.Base)
+The project uses [SharpAstrology.Base](https://github.com/CReizner/SharpAstrology.Base).
+Include the [SharpAstrology.SwissEph](https://github.com/CReizner/SharpAstrology.SwissEph) package, if you don't want to implement IEphemerides yourself. Be aware of the
+dual license of the swisseph project.
+
+```dotnet add package SharpAstrology.SwissEph```
+
+SharpAstrology.SwissEph will include SharpAstrology.Base automatically.
 
 ## Examples
 
