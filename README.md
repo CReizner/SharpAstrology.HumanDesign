@@ -44,12 +44,14 @@ var chart = new HumanDesignChart(pointInTime, eph);
 
 Console.WriteLine($"Type: {chart.Type}");
 // Type: Generator
-Console.WriteLine($"Profile: {chart.Profile.GetAsString()}");
+Console.WriteLine($"Profile: {chart.Profile.ToText()}");
 // Profile: 1 / 3
 Console.WriteLine($"Strategy: {chart.Strategy}");
 // Strategy: Emotional
-Console.WriteLine($"Split definition: {chart.SplitDefinition.GetAsString()}");
+Console.WriteLine($"Split definition: {chart.SplitDefinition.ToText()}");
 // Split definition: Split
+Console.WriteLine($"Incarnation Cross: {chart.IncarnationCross.ToText()}");
+// Incarnation Cross: The Right Angle Cross of Tension 4
 
 Console.WriteLine("\nActive channels:");
 foreach (var channel in chart.ActiveChannels)
