@@ -12,7 +12,7 @@ public enum Types
 
 public static class TypesExtensionMethods
 {
-    public static string ToString(this Types type) => type switch
+    public static string ToText(this Types type) => type switch
     {
         Types.Generator => "Generator",
         Types.Manifestor => "Manifestor",

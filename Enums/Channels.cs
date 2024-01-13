@@ -85,7 +85,7 @@ public static class ChannelExtensionMethods
         Channels.Key47Key64 => (Gates.Key47, Gates.Key64)
     };
     
-    public static string ToString(this Channels hdChannel) => hdChannel switch
+    public static string ToText(this Channels hdChannel) => hdChannel switch
     {
         Channels.Key1Key8 => "Channel 1-8",
         Channels.Key2Key14 => "Channel 2-14",

@@ -14,7 +14,7 @@ public static class HdSplitDefinitionExtensionMethods
 {
     public static int ToNumberOfComponent(this SplitDefinitions splitDefinition) => (int)splitDefinition;
 
-    public static string ToString(this SplitDefinitions splitDefinition) => splitDefinition switch
+    public static string ToText(this SplitDefinitions splitDefinition) => splitDefinition switch
     {
         SplitDefinitions.Empty => "Empty",
         SplitDefinitions.SingleDefinition => "Single",

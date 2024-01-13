@@ -590,7 +590,7 @@ public static class IncarnationCrossesExtensionMethods
                 (Gates.Key46, Angles.Right) => IncarnationCrosses.RightAngleCrossOfTheVesselOfLove3
             };
 
-            public static string ToString(this IncarnationCrosses cross) => cross switch
+            public static string ToText(this IncarnationCrosses cross) => cross switch
             {
                 IncarnationCrosses.JuxtapositionCrossOfAlertness => "The Juxtaposition Cross of Alertness",
                 IncarnationCrosses.JuxtapositionCrossOfAmbition => "The Juxtaposition Cross of Ambition",

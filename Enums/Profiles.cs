@@ -34,7 +34,7 @@ public static class ProfilesExtensionMethods
         Profiles.SixThree => (Lines.Six, Lines.Three)
     };
 
-    public static string ToString(this Profiles profile) => profile switch
+    public static string ToText(this Profiles profile) => profile switch
     {
         Profiles.OneThree => "1 / 3",
         Profiles.OneFour => "1 / 4",

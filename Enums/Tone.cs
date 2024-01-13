@@ -16,7 +16,7 @@ public static class ToneExtensionMethods
 {
     public static int ToNumber(this Tone line) => (int)line;
 
-    public static Orientation ToVOrientation(this Tone line) => line switch
+    public static Orientation ToOrientation(this Tone line) => line switch
     {
         Tone.One => Orientation.Left,
         Tone.Two => Orientation.Left,

@@ -154,22 +154,22 @@ public static class HumanDesignChartExtensionMethods
         return new Variables
         {
             Digestion = (
-                chart.DesignActivation[Planets.Sun].Tone.ToVOrientation(),
+                chart.DesignActivation[Planets.Sun].Tone.ToOrientation(),
                 chart.DesignActivation[Planets.Sun].Color, 
                 chart.DesignActivation[Planets.Sun].Tone,
                 chart.DesignActivation[Planets.Sun].Base),
             Perspective = (
-                chart.PersonalityActivation[Planets.Sun].Tone.ToVOrientation(),
+                chart.PersonalityActivation[Planets.Sun].Tone.ToOrientation(),
                 chart.PersonalityActivation[Planets.Sun].Color, 
                 chart.PersonalityActivation[Planets.Sun].Tone,
                 chart.PersonalityActivation[Planets.Sun].Base),
             Environment = (
-                chart.DesignActivation[Planets.NorthNode].Tone.ToVOrientation(),
+                chart.DesignActivation[Planets.NorthNode].Tone.ToOrientation(),
                 chart.DesignActivation[Planets.NorthNode].Color, 
                 chart.DesignActivation[Planets.NorthNode].Tone,
                 chart.DesignActivation[Planets.NorthNode].Base),
             Awareness = (
-                chart.PersonalityActivation[Planets.NorthNode].Tone.ToVOrientation(),
+                chart.PersonalityActivation[Planets.NorthNode].Tone.ToOrientation(),
                 chart.PersonalityActivation[Planets.NorthNode].Color, 
                 chart.PersonalityActivation[Planets.NorthNode].Tone,
                 chart.PersonalityActivation[Planets.NorthNode].Base),
