@@ -154,6 +154,21 @@ public sealed class HumanDesignChart
         }
     }
 
+    private IncarnationCrosses? _incarnationCross;
+    /// <summary>
+    /// Gets the Incarnation Cross associated with this chart.
+    /// If the value has already been calculated, it retrieves the calculated value.
+    /// If it hasn't been calculated yet, it will call the associated extension method <see cref="HumanDesignChartExtensionMethods.IncarnationCross"/>
+    /// to calculate its value.
+    /// </summary>
+    public IncarnationCrosses IncarnationCross
+    {
+        get
+        {
+            _incarnationCross ??= this.IncarnationCross();
+            return _incarnationCross.Value;
+        }
+    }
     
     private Variables? _variables;
     /// <summary>

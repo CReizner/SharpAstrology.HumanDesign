@@ -198,7 +198,7 @@ public enum IncarnationCrosses
 }
 public static class IncarnationCrossesExtensionMethods
 {
-    public static (Gates, Angles) GetGeneKeys(this IncarnationCrosses cross) => cross switch
+    public static (Gates, Angles) ToGeneKeys(this IncarnationCrosses cross) => cross switch
     {
         IncarnationCrosses.JuxtapositionCrossOfAlertness => (Gates.Key44, Angles.Juxtaposition),
         IncarnationCrosses.JuxtapositionCrossOfAmbition => (Gates.Key54, Angles.Juxtaposition),
@@ -394,7 +394,7 @@ public static class IncarnationCrossesExtensionMethods
         IncarnationCrosses.RightAngleCrossOfTheVesselOfLove3 => (Gates.Key46, Angles.Right)
     };
 
-        public static IncarnationCrosses GetIncarnationCrosses(this (Gates, Angles) position) => position switch
+        public static IncarnationCrosses ToIncarnationCross(this (Gates, Angles) position) => position switch
             {
                 (Gates.Key44, Angles.Juxtaposition) => IncarnationCrosses.JuxtapositionCrossOfAlertness,
                 (Gates.Key54, Angles.Juxtaposition) => IncarnationCrosses.JuxtapositionCrossOfAmbition,

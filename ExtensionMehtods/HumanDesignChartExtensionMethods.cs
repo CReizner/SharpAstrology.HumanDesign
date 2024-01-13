@@ -175,4 +175,10 @@ public static class HumanDesignChartExtensionMethods
                 chart.PersonalityActivation[Planets.NorthNode].Base),
         };
     }
+
+    public static IncarnationCrosses IncarnationCross(this HumanDesignChart chart)
+    {
+        return (chart.PersonalityActivation[Planets.Sun].Gate, chart.Profile.ToAngle())
+            .ToIncarnationCross();
+    }
 }
