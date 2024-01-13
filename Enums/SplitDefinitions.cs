@@ -1,10 +1,12 @@
+#pragma warning disable CS8524
+
 namespace SharpAstrology.Enums;
+
 public enum SplitDefinitions
 {
     Empty,
     SingleDefinition,
     SplitDefinition,
-    DoubleSplit,
     TripleSplit,
     QuadrupleSplit
 }
@@ -16,8 +18,7 @@ public static class HdSplitDefinitionExtensionMethods
         SplitDefinitions.SingleDefinition => 1,
         SplitDefinitions.SplitDefinition => 2,
         SplitDefinitions.TripleSplit => 3,
-        SplitDefinitions.QuadrupleSplit => 4,
-        _ => throw new ArgumentException("This SplitDefinition is not defined in GetNumberOfComponents().")
+        SplitDefinitions.QuadrupleSplit => 4
     };
 
     public static string GetAsString(this SplitDefinitions splitDefinition) => splitDefinition switch
@@ -27,6 +28,5 @@ public static class HdSplitDefinitionExtensionMethods
         SplitDefinitions.SplitDefinition => "Split",
         SplitDefinitions.TripleSplit => "Triple Split",
         SplitDefinitions.QuadrupleSplit => "Quadruple Split",
-        _ => throw new ArgumentException("This SplitDefinition is not defined in GetNumberOfComponents().")
     };
 }

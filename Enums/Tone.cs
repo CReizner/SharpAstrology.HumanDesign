@@ -1,3 +1,5 @@
+#pragma warning disable CS8524
+
 namespace SharpAstrology.Enums;
 
 public enum Tone

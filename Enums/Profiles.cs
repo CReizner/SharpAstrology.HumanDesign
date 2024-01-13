@@ -1,3 +1,5 @@
+#pragma warning disable CS8524
+
 namespace SharpAstrology.Enums;
 public enum Profiles
 {
@@ -16,23 +18,6 @@ public enum Profiles
 }
 public static class ProfilesExtensionMethods
 {
-    public static Profiles ToProfile(this (Lines, Lines) line) => line.Item1 switch
-    {
-        Lines.One when line.Item2 == Lines.Three => Profiles.OneThree,
-        Lines.One when line.Item2 == Lines.Four => Profiles.OneFour,
-        Lines.Two when line.Item2 == Lines.Four => Profiles.TwoFour,
-        Lines.Two when line.Item2 == Lines.Five => Profiles.TwoFive,
-        Lines.Three when line.Item2 == Lines.Five => Profiles.ThreeFive,
-        Lines.Three when line.Item2 == Lines.Six => Profiles.ThreeSix,
-        Lines.Four when line.Item2 == Lines.Six => Profiles.FourSix,
-        Lines.Four when line.Item2 == Lines.One => Profiles.FourOne,
-        Lines.Five when line.Item2 == Lines.One => Profiles.FiveOne,
-        Lines.Five when line.Item2 == Lines.Two => Profiles.FiveTwo,
-        Lines.Six when line.Item2 == Lines.Two => Profiles.SixTwo,
-        Lines.Six when line.Item2 == Lines.Three => Profiles.SixThree,
-        _ => throw new Exception($"No Human Design Profile defined for {line.Item1} / {line.Item2}")
-    };
-
     public static (Lines Conscious, Lines Unconscious) ToLines(this Profiles profile) => profile switch
     {
         Profiles.OneThree => (Lines.One, Lines.Three),
@@ -46,11 +31,10 @@ public static class ProfilesExtensionMethods
         Profiles.FiveOne => (Lines.Five, Lines.One),
         Profiles.FiveTwo => (Lines.Five, Lines.Two),
         Profiles.SixTwo => (Lines.Six, Lines.Two),
-        Profiles.SixThree => (Lines.Six, Lines.Three),
-        _ => throw new Exception($"No Human Design Profile defined for {profile}")
+        Profiles.SixThree => (Lines.Six, Lines.Three)
     };
 
-    public static string GetAsString(this Profiles profiles) => profiles switch
+    public static string GetAsString(this Profiles profile) => profile switch
     {
         Profiles.OneThree => "1 / 3",
         Profiles.OneFour => "1 / 4",
@@ -63,7 +47,22 @@ public static class ProfilesExtensionMethods
         Profiles.FiveOne => "5 / 1",
         Profiles.FiveTwo => "5 / 2",
         Profiles.SixTwo => "6 / 2",
-        Profiles.SixThree => "6 / 3",
-        _ => throw new Exception($"No Human Design Profile defined for {profiles}")
+        Profiles.SixThree => "6 / 3"
+    };
+
+    public static Angles ToAngle(this Profiles profile) => profile switch
+    {
+        Profiles.OneThree => Angles.Right,
+        Profiles.OneFour => Angles.Right,
+        Profiles.TwoFour => Angles.Right,
+        Profiles.TwoFive => Angles.Right,
+        Profiles.ThreeFive => Angles.Right,
+        Profiles.ThreeSix => Angles.Right,
+        Profiles.FourSix => Angles.Right,
+        Profiles.FourOne => Angles.Juxtaposition,
+        Profiles.FiveOne => Angles.Left,
+        Profiles.FiveTwo => Angles.Left,
+        Profiles.SixTwo => Angles.Left,
+        Profiles.SixThree => Angles.Left,
     };
 }

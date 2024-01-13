@@ -1,3 +1,5 @@
+#pragma warning disable CS8524
+
 namespace SharpAstrology.Enums;
 public enum Types
 {
@@ -16,6 +18,6 @@ public static class TypesExtensionMethods
         Types.Manifestor => "Manifestor",
         Types.Projector => "Projector",
         Types.Reflector => "Reflector",
-        Types.ManifestingGenerator => "Manifesting Generator"
-    };
+        Types.ManifestingGenerator => "Manifesting Generator",
+   };
 }
