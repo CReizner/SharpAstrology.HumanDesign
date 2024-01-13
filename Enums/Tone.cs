@@ -14,15 +14,7 @@ public enum Tone
 
 public static class ToneExtensionMethods
 {
-    public static int ToNumber(this Tone line) => line switch
-    {
-        Tone.One => 1,
-        Tone.Two => 2,
-        Tone.Three => 3,
-        Tone.Four => 4,
-        Tone.Five => 5,
-        Tone.Six => 6
-    };
+    public static int ToNumber(this Tone line) => (int)line;
 
     public static Orientation ToVOrientation(this Tone line) => line switch
     {

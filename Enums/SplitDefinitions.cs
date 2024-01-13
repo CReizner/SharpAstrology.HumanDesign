@@ -4,24 +4,17 @@ namespace SharpAstrology.Enums;
 
 public enum SplitDefinitions
 {
-    Empty,
-    SingleDefinition,
-    SplitDefinition,
-    TripleSplit,
-    QuadrupleSplit
+    Empty = 0,
+    SingleDefinition = 1,
+    SplitDefinition = 2,
+    TripleSplit = 3,
+    QuadrupleSplit = 4
 }
 public static class HdSplitDefinitionExtensionMethods
 {
-    public static int GetNumberOfComponent(this SplitDefinitions splitDefinition) => splitDefinition switch
-    {
-        SplitDefinitions.Empty => 0,
-        SplitDefinitions.SingleDefinition => 1,
-        SplitDefinitions.SplitDefinition => 2,
-        SplitDefinitions.TripleSplit => 3,
-        SplitDefinitions.QuadrupleSplit => 4
-    };
+    public static int ToNumberOfComponent(this SplitDefinitions splitDefinition) => (int)splitDefinition;
 
-    public static string GetAsString(this SplitDefinitions splitDefinition) => splitDefinition switch
+    public static string ToString(this SplitDefinitions splitDefinition) => splitDefinition switch
     {
         SplitDefinitions.Empty => "Empty",
         SplitDefinitions.SingleDefinition => "Single",
