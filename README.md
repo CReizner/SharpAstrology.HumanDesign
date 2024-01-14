@@ -18,7 +18,8 @@ dual license of the swisseph project.
 
 ```dotnet add package SharpAstrology.SwissEph```
 
-SharpAstrology.SwissEph will include SharpAstrology.Base automatically.
+SharpAstrology.SwissEph will include SharpAstrology.Base automatically. *Use JPL files or swiss eph files for exact calculations that are in alignment with online chart calculators.*
+For explanation how to do that, please visit the original [swisseph project](https://github.com/aloistr/swisseph) on GitHub and look for *Donwload location of files*.
 
 ## Examples
 
@@ -71,3 +72,8 @@ Console.WriteLine($"Environment: {chart.Variables.Environment.Orientation}, {cha
 Console.WriteLine($"Awareness: {chart.Variables.Awareness.Orientation}, {chart.Variables.Awareness.Color.ToNumber()}-{chart.Variables.Awareness.Tone.ToNumber()}");
 // Awareness: Left, 3-1
 ```
+
+## Future plans
+- [] Indicate if a planet is strong in a gate
+- [] Include option for sidereal chart calculation
+- [] If exact birth time is unknown, but a time spectrum is given, then all possible charts with probability can be calculated
