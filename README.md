@@ -62,6 +62,18 @@ foreach (var channel in chart.ActiveChannels)
 // (Key29, Key46)
 // (Key39, Key55)
 
+Console.WriteLine("\nActive Gates:");
+foreach (var (planet, activation) in chart.PersonalityActivation)
+{
+    Console.WriteLine($"\t{planet} {activation.Gate}-{activation.Line}-{activation.PlanetState}");
+}
+
+Console.WriteLine("\nActive Gates:");
+foreach (var (planet, activation) in chart.DesignActivation)
+{
+    Console.WriteLine($"\t{planet} {activation.Gate}-{activation.Line}-{activation.PlanetState}");
+}
+
 Console.WriteLine("\nVariables:");
 Console.WriteLine($"Digestion: {chart.Variables.Digestion.Orientation}, {chart.Variables.Digestion.Color.ToNumber()}-{chart.Variables.Digestion.Tone.ToNumber()}");
 // Digestion: Left, 5-2
@@ -74,6 +86,6 @@ Console.WriteLine($"Awareness: {chart.Variables.Awareness.Orientation}, {chart.V
 ```
 
 ## Future plans
-- [ ] Indicate if a planet is strong in a gate
+- [x] Indicate if a planet is exalted, in detriment or juxtaposed in a position
 - [ ] Include option for sidereal chart calculation
 - [ ] If exact birth time is unknown, but a time spectrum is given, then all possible charts with probability can be calculated

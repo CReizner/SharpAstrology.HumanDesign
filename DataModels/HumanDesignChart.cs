@@ -49,10 +49,11 @@ public sealed class HumanDesignChart
     {
         PersonalityActivation = Definitions.HumanDesignDefaults.HumanDesignPlanets.ToDictionary(
             p => p,
-            p => Utility.HumanDesignUtility.ActivationOf(eph.PlanetsPosition(p, dateOfBirth).Longitude));
+            p => Utility.HumanDesignUtility.ActivationOf(eph.PlanetsPosition(p, dateOfBirth).Longitude, p));
         DesignActivation = Definitions.HumanDesignDefaults.HumanDesignPlanets.ToDictionary(
             p => p,
-            p => Utility.HumanDesignUtility.ActivationOf(eph.PlanetsPosition(p, designDate).Longitude));
+            p => Utility.HumanDesignUtility.ActivationOf(eph.PlanetsPosition(p, designDate).Longitude, p));
+        Utility.HumanDesignUtility.CalculateState(PersonalityActivation, DesignActivation);
         var activeGates = Utility.HumanDesignUtility
             .ActiveGates(PersonalityActivation, DesignActivation);
         (ConnectedComponents, Splits) = GraphService.ConnectedCenters(Utility.HumanDesignUtility.ActiveChannels(activeGates));

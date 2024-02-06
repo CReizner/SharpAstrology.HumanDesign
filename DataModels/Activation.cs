@@ -34,4 +34,10 @@ public sealed class Activation
     /// Each tone is divided into five bases.
     /// </summary>
     public Base Base { get; init; }
+
+    /// <summary>
+    /// Gets the planets fixing state of the activation. Depending on the gate and line where the planet is situated, it can
+    /// be in exaltation, detriment or both or no special state.
+    /// </summary>
+    public FixingState FixingState { get; set; }
 }
