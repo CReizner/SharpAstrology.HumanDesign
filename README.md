@@ -65,13 +65,13 @@ foreach (var channel in chart.ActiveChannels)
 Console.WriteLine("\nActive Gates:");
 foreach (var (planet, activation) in chart.PersonalityActivation)
 {
-    Console.WriteLine($"\t{planet} {activation.Gate}-{activation.Line}-{activation.PlanetState}");
+    Console.WriteLine($"\t{planet} {activation.Gate}-{activation.Line}-{activation.FixingState}");
 }
 
 Console.WriteLine("\nActive Gates:");
 foreach (var (planet, activation) in chart.DesignActivation)
 {
-    Console.WriteLine($"\t{planet} {activation.Gate}-{activation.Line}-{activation.PlanetState}");
+    Console.WriteLine($"\t{planet} {activation.Gate}-{activation.Line}-{activation.FixingState}");
 }
 
 Console.WriteLine("\nVariables:");
@@ -87,5 +87,5 @@ Console.WriteLine($"Awareness: {chart.Variables.Awareness.Orientation}, {chart.V
 
 ## Future plans
 - [x] Indicate if a planet is exalted, in detriment or juxtaposed in a position
-- [ ] Include option for sidereal chart calculation
+- [x] Include option for sidereal chart calculation
 - [ ] If exact birth time is unknown, but a time spectrum is given, then all possible charts with probability can be calculated

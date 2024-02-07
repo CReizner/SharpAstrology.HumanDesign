@@ -37,7 +37,10 @@ public sealed class HumanDesignChart
     /// </summary>
     /// <param name="dateOfBirth">The date of birth for which the Human Design Chart is being created.</param>
     /// <param name="eph">The ephemerides used for planetary positions calculations.</param>
-    public HumanDesignChart(DateTime dateOfBirth, IEphemerides eph) : this(dateOfBirth, eph.DesignJulianDay(dateOfBirth), eph) { }
+    /// <param name="mode">Tropical or sidereal calculation mode. Default is tropical.</param>
+
+    public HumanDesignChart(DateTime dateOfBirth, IEphemerides eph, EphCalculationMode mode = EphCalculationMode.Tropic) 
+        : this(dateOfBirth, eph.DesignJulianDay(dateOfBirth), eph, mode) { }
     
     /// <summary>
     /// Initializes a new instance of the <see cref="HumanDesignChart"/> class.
@@ -45,14 +48,15 @@ public sealed class HumanDesignChart
     /// <param name="dateOfBirth">The date of birth for which the Human Design Chart is being created.</param>
     /// <param name="designDate">The corresponding design date.</param>
     /// <param name="eph">The ephemerides used for planetary positions calculations.</param>
-    public HumanDesignChart(DateTime dateOfBirth, DateTime designDate, IEphemerides eph)
+    /// <param name="mode">Tropical or sidereal calculation mode. Default is tropical.</param>
+    public HumanDesignChart(DateTime dateOfBirth, DateTime designDate, IEphemerides eph, EphCalculationMode mode = EphCalculationMode.Tropic)
     {
         PersonalityActivation = Definitions.HumanDesignDefaults.HumanDesignPlanets.ToDictionary(
             p => p,
-            p => Utility.HumanDesignUtility.ActivationOf(eph.PlanetsPosition(p, dateOfBirth).Longitude, p));
+            p => Utility.HumanDesignUtility.ActivationOf(eph.PlanetsPosition(p, dateOfBirth, mode).Longitude, p));
         DesignActivation = Definitions.HumanDesignDefaults.HumanDesignPlanets.ToDictionary(
             p => p,
-            p => Utility.HumanDesignUtility.ActivationOf(eph.PlanetsPosition(p, designDate).Longitude, p));
+            p => Utility.HumanDesignUtility.ActivationOf(eph.PlanetsPosition(p, designDate, mode).Longitude, p));
         Utility.HumanDesignUtility.CalculateState(PersonalityActivation, DesignActivation);
         var activeGates = Utility.HumanDesignUtility
             .ActiveGates(PersonalityActivation, DesignActivation);
