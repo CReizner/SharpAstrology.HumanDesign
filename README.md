@@ -89,3 +89,4 @@ Console.WriteLine($"Awareness: {chart.Variables.Awareness.Orientation}, {chart.V
 - [x] Indicate if a planet is exalted, in detriment or juxtaposed in a position
 - [x] Include option for sidereal chart calculation
 - [ ] If exact birth time is unknown, but a time spectrum is given, then all possible charts with probability can be calculated
+- [ ] Adding support for combined charts.
