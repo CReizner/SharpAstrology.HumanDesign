@@ -62,13 +62,13 @@ foreach (var channel in chart.ActiveChannels)
 // (Key29, Key46)
 // (Key39, Key55)
 
-Console.WriteLine("\nActive Gates:");
+Console.WriteLine("\nActive Personality Gates:");
 foreach (var (planet, activation) in chart.PersonalityActivation)
 {
     Console.WriteLine($"\t{planet} {activation.Gate}-{activation.Line}-{activation.FixingState}");
 }
 
-Console.WriteLine("\nActive Gates:");
+Console.WriteLine("\nActive Design Gates:");
 foreach (var (planet, activation) in chart.DesignActivation)
 {
     Console.WriteLine($"\t{planet} {activation.Gate}-{activation.Line}-{activation.FixingState}");
@@ -85,8 +85,16 @@ Console.WriteLine($"Awareness: {chart.Variables.Awareness.Orientation}, {chart.V
 // Awareness: Left, 3-1
 ```
 
+### If you don't know the exact time of birth
+
+You can specify a time range and see which different charts appear in this period. Different means that the charts differ in at least one active gate or in the line of the sun.
+
+```C#
+
+```
+
 ## Future plans
 - [x] Indicate if a planet is exalted, in detriment or juxtaposed in a position
 - [x] Include option for sidereal chart calculation
-- [ ] If exact birth time is unknown, but a time spectrum is given, then all possible charts with probability can be calculated
+- [x] If exact birth time is unknown, but a time spectrum is given, then all possible charts with probability can be calculated
 - [ ] Adding support for combined charts.

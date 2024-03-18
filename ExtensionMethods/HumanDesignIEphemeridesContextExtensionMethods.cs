@@ -15,14 +15,14 @@ public static class HumanDesignIEphemeridesContextExtensionMethods
     /// <param name="birthdate">The UTC date of birth for which the design Julian day is being calculated.</param>
     /// <returns>The design Julian day corresponding to the given birthdate.</returns>
     /// <exception cref="ArgumentException">Thrown if the provided birthdate is not in UTC.</exception>
-    public static DateTime DesignJulianDay(this IEphemerides ephService, DateTime birthdate)
+    public static DateTime DesignJulianDay(this IEphemerides ephService, DateTime birthdate, EphCalculationMode mode = EphCalculationMode.Tropic)
     {
         if (birthdate.Kind != DateTimeKind.Utc)
         {
             throw new ArgumentException("The given birthdate is not in UTC");
         }
         var dateOfBirthJulian = birthdate.ToJulianDate();
-        var sunsLongitude = ephService.PlanetsPosition(Planets.Sun, birthdate).Longitude;
+        var sunsLongitude = ephService.PlanetsPosition(Planets.Sun, birthdate, mode).Longitude;
         var dateOfIncomingJulian = RootFinder.FindRoot(jd => AstrologyUtility.AngleDifference(
             AstrologyUtility.SubtractDegree(sunsLongitude, 88),
             ephService.PlanetsPosition(Planets.Sun, AstrologyUtility.DateTimeFromJulianDate(jd)).Longitude

@@ -40,4 +40,44 @@ public sealed class Activation
     /// be in exaltation, detriment or both or no special state.
     /// </summary>
     public FixingState FixingState { get; set; }
+
+    /// <summary>
+    /// Determines whether the specified <see cref="Activation"/> object is equal to the current object,
+    /// considering different levels of comparison depth specified by <see cref="ComparerDepth"/>.
+    /// </summary>
+    /// <param name="other">The <see cref="Activation"/> object to compare with the current object.</param>
+    /// <param name="depth">The depth of comparison, which determines how extensively the objects are compared.
+    /// The comparison can include checks at various levels, such as Gate, Line, Color, Tone, and Base, depending on the specified depth.</param>
+    /// <returns><c>true</c> if the specified object is equal to the current object; otherwise, <c>false</c>.</returns>
+    internal bool Equals(Activation? other, ComparerDepth depth = ComparerDepth.Line)
+    {
+        if (ReferenceEquals(null, other)) return false;
+        if (ReferenceEquals(this, other)) return true;
+        if (ComparerDepth.Gate <= depth)
+        {
+            if (Gate != other.Gate) return false;
+        }
+        
+        if (ComparerDepth.Line <= depth)
+        {
+            if (Line != other.Line) return false;
+        }
+        
+        if (ComparerDepth.Color <= depth)
+        {
+            if (Color != other.Color) return false;
+        }
+        
+        if (ComparerDepth.Tone <= depth)
+        {
+            if (Tone != other.Tone) return false;
+        }
+        
+        if (ComparerDepth.Base <= depth)
+        {
+            if (Base != other.Base) return false;
+        }
+
+        return true;
+    }
 }

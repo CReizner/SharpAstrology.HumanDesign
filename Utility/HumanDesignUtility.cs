@@ -67,30 +67,6 @@ public static class HumanDesignUtility
             Base = (Base)Math.Floor((x % DegreePerTone) / DegreePerBase) + 1
         };
     }
-
-    /// <summary>
-    /// Determines the activation values (Gate, Line, Color, Tone, Base) and the planets state based on the provided longitude and planet.
-    /// The longitude must be the given planets position.
-    /// </summary>
-    /// <param name="longitude">The longitude used for activation calculation.</param>
-    /// <param name="planet">The planet at this longitude.</param>
-    /// <returns>An <see cref="DataModels.Activation"/> object containing the calculated values.</returns>
-    public static Activation ActivationOf(double longitude, Planets planet)
-    {
-        var x = longitude - HdOffsetToZodiac;
-        if (x < 0) x += 360;
-
-        var gate = (Gates)Math.Floor(x / DegreePerGate);
-        var line = (Lines)Math.Floor((x % DegreePerGate) / DegreePerLine) + 1;
-        return new Activation()
-        {
-            Gate = gate,
-            Line = line,
-            Color = (Color)Math.Floor((x % DegreePerLine) / DegreePerColor) + 1,
-            Tone = (Tone)Math.Floor((x % DegreePerColor) / DegreePerTone) + 1,
-            Base = (Base)Math.Floor((x % DegreePerTone) / DegreePerBase) + 1
-        };
-    }
     
     private static FixingState _getStateFromStatesTable(Planets planet, Gates gate, Lines line)
     {
