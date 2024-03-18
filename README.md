@@ -90,7 +90,27 @@ Console.WriteLine($"Awareness: {chart.Variables.Awareness.Orientation}, {chart.V
 You can specify a time range and see which different charts appear in this period. Different means that the charts differ in at least one active gate or in the line of the sun.
 
 ```C#
+using SharpAstrology.DataModels;
+using SharpAstrology.Enums;
+using SharpAstrology.Ephemerides;
 
+
+var start = new DateTime(1988, 9, 4, 0, 0, 0, DateTimeKind.Utc);
+var end = new DateTime(1988, 9, 4, 3, 0, 0, DateTimeKind.Utc);
+
+var eph = new SwissEphemeridesService("/home/christian/Programing/SharpAstrology/SharpAstrology.SwissEph/Data/Ephe").CreateContext();
+
+var results = HumanDesignChart.Guess(start, end, eph);
+
+foreach (var r in results)
+{
+    Console.WriteLine($"Probability {r.Probability}");
+    foreach (var (planet, activation) in r.Chart.PersonalityActivation)
+    {
+        Console.WriteLine($"{planet.ToName()}: {activation.Gate}-{activation.Line}\t{r.Chart.DesignActivation[planet].Gate}-{r.Chart.DesignActivation[planet].Line}");
+    }
+    Console.WriteLine("---------------------------");
+}
 ```
 
 ## Future plans
