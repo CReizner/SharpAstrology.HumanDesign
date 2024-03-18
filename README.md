@@ -98,7 +98,7 @@ using SharpAstrology.Ephemerides;
 var start = new DateTime(1988, 9, 4, 0, 0, 0, DateTimeKind.Utc);
 var end = new DateTime(1988, 9, 4, 3, 0, 0, DateTimeKind.Utc);
 
-var eph = new SwissEphemeridesService("/home/christian/Programing/SharpAstrology/SharpAstrology.SwissEph/Data/Ephe").CreateContext();
+var eph = new SwissEphemeridesService([YOUR_PATH_THE_EPHE_FILES]).CreateContext();
 
 var results = HumanDesignChart.Guess(start, end, eph);
 
