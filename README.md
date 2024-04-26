@@ -113,8 +113,10 @@ foreach (var r in results)
 }
 ```
 
-## Future plans
-- [x] Indicate if a planet is exalted, in detriment or juxtaposed in a position
-- [x] Include option for sidereal chart calculation
-- [x] If exact birth time is unknown, but a time spectrum is given, then all possible charts with probability can be calculated
-- [ ] Adding support for combined charts.
+## Future plans for v1.0.0
+- [x] Indicate if a planet is exalted, in detriment or juxtaposed in a position.
+- [x] Include option for sidereal chart calculation.
+- [x] If exact birth time is unknown, but a time spectrum is given, then all possible charts with probability can be calculated.
+- [x] Adding support for combined charts.
+- [ ] Make chart calculation thread save.
+- [ ] Improve performance for chart calculations using parallelism and eliminating LINQ.

@@ -38,7 +38,7 @@ public sealed class HumanDesignChart
     /// <param name="dateOfBirth">The date of birth for which the Human Design Chart is being created.</param>
     /// <param name="eph">The ephemerides used for planetary positions calculations.</param>
     /// <param name="mode">Tropical or sidereal calculation mode. Default is tropical.</param>
-
+    /// <exception cref="ArgumentException">Thrown if dateOfBirth is not in UTC.</exception>
     public HumanDesignChart(DateTime dateOfBirth, IEphemerides eph, EphCalculationMode mode = EphCalculationMode.Tropic) 
         : this(dateOfBirth, eph.DesignJulianDay(dateOfBirth, mode), eph, mode) { }
     
@@ -49,6 +49,7 @@ public sealed class HumanDesignChart
     /// <param name="designDate">The corresponding design date.</param>
     /// <param name="eph">The ephemerides used for planetary positions calculations.</param>
     /// <param name="mode">Tropical or sidereal calculation mode. Default is tropical.</param>
+    /// <exception cref="ArgumentException">Thrown if dateOfBirth or designDate parameters are not in UTC.</exception>
     public HumanDesignChart(DateTime dateOfBirth, DateTime designDate, IEphemerides eph, EphCalculationMode mode = EphCalculationMode.Tropic)
     {
         PersonalityActivation = Definitions.HumanDesignDefaults.HumanDesignPlanets.ToDictionary(
@@ -58,17 +59,13 @@ public sealed class HumanDesignChart
             p => p,
             p => Utility.HumanDesignUtility.ActivationOf(eph.PlanetsPosition(p, designDate, mode).Longitude));
         Utility.HumanDesignUtility.CalculateState(PersonalityActivation, DesignActivation);
-        var activeGates = Utility.HumanDesignUtility
-            .ActiveGates(PersonalityActivation, DesignActivation);
-        (ConnectedComponents, Splits) = GraphService.ConnectedCenters(Utility.HumanDesignUtility.ActiveChannels(activeGates));
+        (ConnectedComponents, Splits) = GraphService.ConnectedCenters(Utility.HumanDesignUtility.ActiveChannels(ActiveGates));
     }
     
     private Profiles? _profile;
     /// <summary>
     /// Gets the profile associated with this chart. 
-    /// If the value has already been calculated, it retrieves the calculated value. 
-    /// If it hasn't been calculated yet, it will call the associated extension method <see cref="HumanDesignChartExtensionMethods.Profile"/>
-    /// to calculate its value.
+    /// The value will be calculated on the first call of this property.
     /// </summary>
     public Profiles Profile
     {
@@ -82,9 +79,7 @@ public sealed class HumanDesignChart
     private Types? _types;
     /// <summary>
     /// Gets the type associated with this chart.
-    /// If the value has already been calculated, it retrieves the calculated value.
-    /// If it hasn't been calculated yet, it will call the associated extension method <see cref="HumanDesignChartExtensionMethods.Type"/>
-    /// to calculate its value.
+    /// The value will be calculated on the first call of this property.
     /// </summary>
     public Types Type
     {
@@ -98,9 +93,7 @@ public sealed class HumanDesignChart
     private Strategies? _strategy;
     /// <summary>
     /// Gets the strategy associated with this chart.
-    /// If the value has already been calculated, it retrieves the calculated value.
-    /// If it hasn't been calculated yet, it will call the associated extension method <see cref="HumanDesignChartExtensionMethods.Strategy"/>
-    /// to calculate its value.
+    /// The value will be calculated on the first call of this property.
     /// </summary>
     public Strategies Strategy
     {
@@ -114,9 +107,7 @@ public sealed class HumanDesignChart
     private SplitDefinitions? _splitDefinition;
     /// <summary>
     /// Gets the spilt definition associated with this chart.
-    /// If the value has already been calculated, it retrieves the calculated value.
-    /// If it hasn't been calculated yet, it will call the associated extension method <see cref="HumanDesignChartExtensionMethods.SplitDefinition"/>
-    /// to calculate its value.
+    /// The value will be calculated on the first call of this property.
     /// </summary>
     public SplitDefinitions SplitDefinition
     {
@@ -130,9 +121,7 @@ public sealed class HumanDesignChart
     private HashSet<Gates>? _activeGates;
     /// <summary>
     /// Gets the set of active gates of the chart.
-    /// If the value has already been calculated, it retrieves the calculated value.
-    /// If it hasn't been calculated yet, it will call the associated extension method <see cref="HumanDesignChartExtensionMethods.ActiveGates"/>
-    /// to calculate the value.
+    /// The value will be calculated on the first call of this property.
     /// </summary>
     public HashSet<Gates> ActiveGates
     {
@@ -146,9 +135,7 @@ public sealed class HumanDesignChart
     private HashSet<Channels>? _activeChannels;
     /// <summary>
     /// Gets the set of active channels of the chart.
-    /// If the value has already been calculated, it retrieves the calculated value.
-    /// If it hasn't been calculated yet, it will call the associated extension method <see cref="HumanDesignChartExtensionMethods.ActiveChannels"/>
-    /// to calculate the value.
+    /// The value will be calculated on the first call of this property.
     /// </summary>
     public HashSet<Channels> ActiveChannels
     {
@@ -162,9 +149,7 @@ public sealed class HumanDesignChart
     private IncarnationCrosses? _incarnationCross;
     /// <summary>
     /// Gets the Incarnation Cross associated with this chart.
-    /// If the value has already been calculated, it retrieves the calculated value.
-    /// If it hasn't been calculated yet, it will call the associated extension method <see cref="HumanDesignChartExtensionMethods.IncarnationCross"/>
-    /// to calculate its value.
+    /// The value will be calculated on the first call of this property.
     /// </summary>
     public IncarnationCrosses IncarnationCross
     {
@@ -178,9 +163,7 @@ public sealed class HumanDesignChart
     private Variables? _variables;
     /// <summary>
     /// Gets the variables associated with this chart.
-    /// If the value has already been calculated, it retrieves the calculated value.
-    /// If it hasn't been calculated yet, it will call the associated extension method <see cref="HumanDesignChartExtensionMethods.Variables"/>
-    /// to calculate its value.
+    /// The value will be calculated on the first call of this property.
     /// </summary>
     public Variables Variables
     {
