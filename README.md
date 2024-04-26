@@ -118,5 +118,6 @@ foreach (var r in results)
 - [x] Include option for sidereal chart calculation.
 - [x] If exact birth time is unknown, but a time spectrum is given, then all possible charts with probability can be calculated.
 - [x] Adding support for combined charts.
+- [ ] Adding support for transit charts
 - [ ] Make chart calculation thread save.
 - [ ] Improve performance for chart calculations using parallelism and eliminating LINQ.
