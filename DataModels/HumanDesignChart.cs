@@ -2,6 +2,7 @@ using SharpAstrology.Interfaces;
 using SharpAstrology.Enums;
 using SharpAstrology.ExtensionMethods;
 using SharpAstrology.HumanDesign.Mathematics;
+using SharpAstrology.Utility;
 
 
 namespace SharpAstrology.DataModels;
@@ -10,8 +11,13 @@ namespace SharpAstrology.DataModels;
 /// Represents a Human Design Chart. It utilizes planetary positions and activations
 /// to provide several complex characteristics like Types, Profiles, Strategies, Channels, Gates and Variables.
 /// </summary>
-public sealed class HumanDesignChart
+public sealed class HumanDesignChart : IHumanDesignChart
 {
+    private readonly HashSet<Gates> _personalityGates;
+    private readonly HashSet<Gates> _designGates;
+    
+    #region Properties
+    
     /// <summary>
     /// Gets a dictionary of personality activations corresponding to each celestial body. 
     /// </summary>
@@ -21,9 +27,9 @@ public sealed class HumanDesignChart
     /// Gets a dictionary of design activations corresponding to each celestial body. 
     /// </summary>
     public Dictionary<Planets, Activation> DesignActivation { get; }
-    
+
     /// <summary>
-    /// Gets a dictionary of connected components, where each center is associated with its components id.
+    /// Gets a dictionary of connected components, where each center is associated with its component id.
     /// </summary>
     public Dictionary<Centers, int> ConnectedComponents { get; }
     
@@ -32,36 +38,8 @@ public sealed class HumanDesignChart
     /// </summary>
     public int Splits { get; }
 
-    /// <summary>
-    /// Initializes a new instance of the <see cref="HumanDesignChart"/> class. It calculates the design date itself.
-    /// </summary>
-    /// <param name="dateOfBirth">The date of birth for which the Human Design Chart is being created.</param>
-    /// <param name="eph">The ephemerides used for planetary positions calculations.</param>
-    /// <param name="mode">Tropical or sidereal calculation mode. Default is tropical.</param>
-    /// <exception cref="ArgumentException">Thrown if dateOfBirth is not in UTC.</exception>
-    public HumanDesignChart(DateTime dateOfBirth, IEphemerides eph, EphCalculationMode mode = EphCalculationMode.Tropic) 
-        : this(dateOfBirth, eph.DesignJulianDay(dateOfBirth, mode), eph, mode) { }
-    
-    /// <summary>
-    /// Initializes a new instance of the <see cref="HumanDesignChart"/> class.
-    /// </summary>
-    /// <param name="dateOfBirth">The date of birth for which the Human Design Chart is being created.</param>
-    /// <param name="designDate">The corresponding design date.</param>
-    /// <param name="eph">The ephemerides used for planetary positions calculations.</param>
-    /// <param name="mode">Tropical or sidereal calculation mode. Default is tropical.</param>
-    /// <exception cref="ArgumentException">Thrown if dateOfBirth or designDate parameters are not in UTC.</exception>
-    public HumanDesignChart(DateTime dateOfBirth, DateTime designDate, IEphemerides eph, EphCalculationMode mode = EphCalculationMode.Tropic)
-    {
-        PersonalityActivation = Definitions.HumanDesignDefaults.HumanDesignPlanets.ToDictionary(
-            p => p,
-            p => Utility.HumanDesignUtility.ActivationOf(eph.PlanetsPosition(p, dateOfBirth, mode).Longitude));
-        DesignActivation = Definitions.HumanDesignDefaults.HumanDesignPlanets.ToDictionary(
-            p => p,
-            p => Utility.HumanDesignUtility.ActivationOf(eph.PlanetsPosition(p, designDate, mode).Longitude));
-        Utility.HumanDesignUtility.CalculateState(PersonalityActivation, DesignActivation);
-        (ConnectedComponents, Splits) = GraphService.ConnectedCenters(Utility.HumanDesignUtility.ActiveChannels(ActiveGates));
-    }
-    
+    public SplitDefinitions SplitDefinition => HumanDesignUtility.SplitDefinition(Splits);
+
     private Profiles? _profile;
     /// <summary>
     /// Gets the profile associated with this chart. 
@@ -73,6 +51,26 @@ public sealed class HumanDesignChart
         {
             _profile ??= _Profile();
             return _profile!.Value;
+        }
+    }
+    
+    private Dictionary<Gates, ActivationTypes>? _gateActivations;
+    public Dictionary<Gates, ActivationTypes> GateActivations
+    {
+        get
+        {
+            _gateActivations ??= HumanDesignUtility.GateActivations(_personalityGates, _designGates);
+            return _gateActivations;
+        }
+    }
+
+    private Dictionary<Channels, ChannelActivationType>? _channelActivation;
+    public Dictionary<Channels, ChannelActivationType> ChannelActivations
+    {
+        get
+        {
+            _channelActivation ??= HumanDesignUtility.CompositeChannelActivations(_personalityGates, _designGates);
+            return _channelActivation;
         }
     }
 
@@ -101,20 +99,6 @@ public sealed class HumanDesignChart
         {
             _strategy ??= _Strategy();
             return _strategy!.Value;
-        }
-    }
-
-    private SplitDefinitions? _splitDefinition;
-    /// <summary>
-    /// Gets the spilt definition associated with this chart.
-    /// The value will be calculated on the first call of this property.
-    /// </summary>
-    public SplitDefinitions SplitDefinition
-    {
-        get
-        {
-            _splitDefinition ??= _SplitDefinition();
-            return _splitDefinition!.Value;
         }
     }
 
@@ -174,6 +158,46 @@ public sealed class HumanDesignChart
         }
     }
 
+    #endregion
+
+    #region Constructor
+    
+    /// <summary>
+    /// Initializes a new instance of the <see cref="HumanDesignChart"/> class. It calculates the design date itself.
+    /// </summary>
+    /// <param name="dateOfBirth">The date of birth for which the Human Design Chart is being created.</param>
+    /// <param name="eph">The ephemerides used for planetary positions calculations.</param>
+    /// <param name="mode">Tropical or sidereal calculation mode. Default is tropical.</param>
+    /// <exception cref="ArgumentException">Thrown if dateOfBirth is not in UTC.</exception>
+    public HumanDesignChart(DateTime dateOfBirth, IEphemerides eph, EphCalculationMode mode = EphCalculationMode.Tropic) 
+        : this(dateOfBirth, eph.DesignJulianDay(dateOfBirth, mode), eph, mode) { }
+    
+    /// <summary>
+    /// Initializes a new instance of the <see cref="HumanDesignChart"/> class.
+    /// </summary>
+    /// <param name="dateOfBirth">The date of birth for which the Human Design Chart is being created.</param>
+    /// <param name="designDate">The corresponding design date.</param>
+    /// <param name="eph">The ephemerides used for planetary positions calculations.</param>
+    /// <param name="mode">Tropical or sidereal calculation mode. Default is tropical.</param>
+    /// <exception cref="ArgumentException">Thrown if dateOfBirth or designDate parameters are not in UTC.</exception>
+    public HumanDesignChart(DateTime dateOfBirth, DateTime designDate, IEphemerides eph, EphCalculationMode mode = EphCalculationMode.Tropic)
+    {
+        PersonalityActivation = Definitions.HumanDesignDefaults.HumanDesignPlanets.ToDictionary(
+            p => p,
+            p => HumanDesignUtility.ActivationOf(eph.PlanetsPosition(p, dateOfBirth, mode).Longitude));
+        DesignActivation = Definitions.HumanDesignDefaults.HumanDesignPlanets.ToDictionary(
+            p => p,
+            p => HumanDesignUtility.ActivationOf(eph.PlanetsPosition(p, designDate, mode).Longitude));
+        _personalityGates = PersonalityActivation.Values.Select(x => x.Gate).ToHashSet();
+        _designGates = DesignActivation.Values.Select(x => x.Gate).ToHashSet();
+        HumanDesignUtility.CalculateState(PersonalityActivation, DesignActivation);
+        (ConnectedComponents, Splits) = GraphService.ConnectedCenters(HumanDesignUtility.ActiveChannels(ActiveGates));
+    }
+    
+    #endregion
+
+    #region Utility
+    
     /// <summary>
     /// Determines whether the specified <see cref="HumanDesignChart"/> object is equal to the current object,
     /// considering different levels of comparison depth specified by <see cref="ComparerDepth"/>.
@@ -240,7 +264,9 @@ public sealed class HumanDesignChart
 
         return probs.Select(x => (x.Chart, x.Probability)).ToList();
     }
-
+    
+    #endregion
+    
     #region private Methods
     
     private static void _guess(List<(HumanDesignChart Chart, double Probability)> results, 
@@ -262,67 +288,19 @@ public sealed class HumanDesignChart
         _guess(results, null, rightChart, midPoint, end, currentDepth + 1, maxDepth, eph, mode);
     }
     
-    /// <summary>
-    /// Retrieves the activation type for a given gate. 
-    /// It looks for any celestial object that was in this gate on design time or birth time.
-    /// </summary>
-    private ActivationTypes _ActivationType(Gates key)
+    private HashSet<Gates> _ActiveGates()
     {
-        var isActivatedConscious = PersonalityActivation.Any(p => p.Value.Gate == key);
-        var isActivatedUnconscious = DesignActivation.Any(p => p.Value.Gate == key);
-        
-        return isActivatedConscious switch
-        {
-            true when !isActivatedUnconscious => ActivationTypes.Personality,
-            true when isActivatedUnconscious => ActivationTypes.Mixed,
-            false when isActivatedUnconscious => ActivationTypes.Design,
-            _ => ActivationTypes.None
-        };
+        return HumanDesignUtility.ActiveGates(PersonalityActivation, DesignActivation);
     }
     
-    /// <summary>
-    /// Retrieves the activation type for a given channel. It looks for the activation types on both gates.
-    /// </summary>
-    private ActivationTypes _ActivationType(Channels channel)
+    private HashSet<Channels> _ActiveChannels()
     {
-        var (key1, key2) = channel.ToGates();
-
-        return (_ActivationType(key1), _ActivationType(key2)) switch
-        {
-            (_, ActivationTypes.None) => ActivationTypes.None,
-            (ActivationTypes.None, _) => ActivationTypes.None,
-            (ActivationTypes.Mixed, _) => ActivationTypes.Mixed,
-            (_, ActivationTypes.Mixed) => ActivationTypes.Mixed,
-            (ActivationTypes.Personality, ActivationTypes.Design) => ActivationTypes.Mixed,
-            (ActivationTypes.Design, ActivationTypes.Personality) => ActivationTypes.Mixed,
-            (ActivationTypes.Personality, ActivationTypes.Personality) => ActivationTypes.Personality,
-            (ActivationTypes.Design, ActivationTypes.Design) => ActivationTypes.Design,
-            _ => ActivationTypes.None
-        };
+        return HumanDesignUtility.ActiveChannels(ActiveGates);
     }
-    
-    private bool _IsActivated(Centers center) => ConnectedComponents.ContainsKey(center);
-    
-    private bool _IsActivated(Gates key) => _ActivationType(key) != ActivationTypes.None;
-    
-    private bool _IsActivated(Channels channel) => _ActivationType(channel) != ActivationTypes.None;
     
     private Profiles _Profile()
     {
         return (PersonalityActivation[Planets.Sun].Line, DesignActivation[Planets.Sun].Line).ToProfile();
-    }
-
-    private SplitDefinitions _SplitDefinition()
-    {
-        return Splits switch
-        {
-            0 => SplitDefinitions.Empty,
-            1 => SplitDefinitions.SingleDefinition,
-            2 => SplitDefinitions.SplitDefinition,
-            3 => SplitDefinitions.TripleSplit,
-            4 => SplitDefinitions.QuadrupleSplit,
-            _ => throw new ArgumentException($"To much splits: {Splits}")
-        };
     }
     
     private Types _Type()
@@ -396,16 +374,6 @@ public sealed class HumanDesignChart
         return ConnectedComponents.ContainsKey(Centers.Self) ? Strategies.Self : Strategies.Outer;
     }
     
-    private HashSet<Gates> _ActiveGates()
-    {
-        return Utility.HumanDesignUtility.ActiveGates(PersonalityActivation, DesignActivation);
-    }
-    
-    private HashSet<Channels> _ActiveChannels()
-    {
-        return Utility.HumanDesignUtility.ActiveChannels(ActiveGates);
-    }
-
     private Variables _Variables()
     {
         return new Variables
@@ -444,6 +412,6 @@ public sealed class HumanDesignChart
 
 file sealed class ChartProbability
 {
-    public HumanDesignChart Chart;
+    public HumanDesignChart Chart = default!;
     public double Probability;
 };

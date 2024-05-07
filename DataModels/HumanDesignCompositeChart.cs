@@ -2,11 +2,15 @@ using SharpAstrology.Enums;
 using SharpAstrology.ExtensionMethods;
 using SharpAstrology.HumanDesign.Mathematics;
 using SharpAstrology.Interfaces;
+using SharpAstrology.Utility;
 
 namespace SharpAstrology.DataModels;
 
-public sealed class HumanDesignCompositeChart
+public sealed class HumanDesignCompositeChart : IHumanDesignChart
 {
+    private readonly HashSet<Gates> _p1ActiveGates;
+    private readonly HashSet<Gates> _p2ActiveGates;
+    
     /// <summary>
     /// Gets a dictionary of personality activations corresponding to each celestial body for person 1. 
     /// </summary>
@@ -28,7 +32,7 @@ public sealed class HumanDesignCompositeChart
     public Dictionary<Planets, Activation> P2DesignActivation { get; }
     
     /// <summary>
-    /// Gets a dictionary of connected components, where each center is associated with its components id.
+    /// Gets a dictionary of connected components, where each center is associated with its components' id.
     /// </summary>
     public Dictionary<Centers, int> ConnectedComponents { get; }
     
@@ -37,13 +41,34 @@ public sealed class HumanDesignCompositeChart
     /// </summary>
     public int Splits { get; }
 
+    public SplitDefinitions SplitDefinition => HumanDesignUtility.SplitDefinition(Splits);
+
     /// <summary>
     /// Gets the set of active gates of the composite chart.
     /// </summary>
     public HashSet<Gates> ActiveGates { get; }
-
-    private HashSet<Gates> _p1activeGates;
-    private HashSet<Gates> _p2activeGates;
+    
+    private Dictionary<Gates, ActivationTypes>? _gateActivations;
+    public Dictionary<Gates, ActivationTypes> GateActivations
+    {
+        get
+        {
+            _gateActivations ??= HumanDesignUtility.GateActivations(_p1ActiveGates, _p2ActiveGates);
+            return _gateActivations;
+        }
+    }
+    
+    private Dictionary<Channels, ChannelActivationType>? _channelActivation;
+    public Dictionary<Channels, ChannelActivationType> ChannelActivations
+    {
+        get
+        {
+            _channelActivation ??= HumanDesignUtility.CompositeChannelActivations(_p1ActiveGates, _p2ActiveGates);
+            return _channelActivation;
+        }
+    }
+    
+    #region Constructor
     
     /// <summary>
     /// Initializes a new instance of the <see cref="HumanDesignCompositeChart"/> class using two HumanDesignChart objects.
@@ -52,16 +77,44 @@ public sealed class HumanDesignCompositeChart
     /// <param name="person2">The second person's Human Design chart.</param>
     public HumanDesignCompositeChart(HumanDesignChart person1, HumanDesignChart person2)
     {
-        P1PersonalityActivation = person1.PersonalityActivation;
-        P1DesignActivation = person1.DesignActivation;
-        P2PersonalityActivation = person2.PersonalityActivation;
-        P2DesignActivation = person2.DesignActivation;
+        P1PersonalityActivation = person1.PersonalityActivation.ToDictionary(x=>x.Key, x=>new Activation
+        {
+            Gate = x.Value.Gate,
+            Line = x.Value.Line,
+            Color = x.Value.Color,
+            Tone = x.Value.Tone,
+            Base = x.Value.Base
+        });
+        P1DesignActivation = person1.DesignActivation.ToDictionary(x=>x.Key, x=>new Activation
+        {
+            Gate = x.Value.Gate,
+            Line = x.Value.Line,
+            Color = x.Value.Color,
+            Tone = x.Value.Tone,
+            Base = x.Value.Base
+        });
+        P2PersonalityActivation = person2.PersonalityActivation.ToDictionary(x=>x.Key, x=>new Activation
+        {
+            Gate = x.Value.Gate,
+            Line = x.Value.Line,
+            Color = x.Value.Color,
+            Tone = x.Value.Tone,
+            Base = x.Value.Base
+        });
+        P2DesignActivation = person2.DesignActivation.ToDictionary(x=>x.Key, x=>new Activation
+        {
+            Gate = x.Value.Gate,
+            Line = x.Value.Line,
+            Color = x.Value.Color,
+            Tone = x.Value.Tone,
+            Base = x.Value.Base
+        });
 
-        _p1activeGates = person1.ActiveGates;
-        _p2activeGates = person2.ActiveGates;
+        _p1ActiveGates = person1.ActiveGates;
+        _p2ActiveGates = person2.ActiveGates;
         
-        ActiveGates = _p1activeGates.ToHashSet();
-        ActiveGates.UnionWith(_p2activeGates);
+        ActiveGates = _p1ActiveGates.ToHashSet();
+        ActiveGates.UnionWith(_p2ActiveGates);
         
         (ConnectedComponents, Splits) = GraphService.ConnectedCenters(Utility.HumanDesignUtility.ActiveChannels(ActiveGates));
     }
@@ -80,140 +133,29 @@ public sealed class HumanDesignCompositeChart
         
         P1PersonalityActivation = Definitions.HumanDesignDefaults.HumanDesignPlanets.ToDictionary(
             p => p,
-            p => Utility.HumanDesignUtility.ActivationOf(eph.PlanetsPosition(p, p1dateOfBirth, mode).Longitude));
+            p => HumanDesignUtility.ActivationOf(eph.PlanetsPosition(p, p1dateOfBirth, mode).Longitude));
         P1DesignActivation = Definitions.HumanDesignDefaults.HumanDesignPlanets.ToDictionary(
             p => p,
-            p => Utility.HumanDesignUtility.ActivationOf(eph.PlanetsPosition(p, p1designDate, mode).Longitude));
-        Utility.HumanDesignUtility.CalculateState(P1PersonalityActivation, P1DesignActivation);
+            p => HumanDesignUtility.ActivationOf(eph.PlanetsPosition(p, p1designDate, mode).Longitude));
         
         P2PersonalityActivation = Definitions.HumanDesignDefaults.HumanDesignPlanets.ToDictionary(
             p => p,
-            p => Utility.HumanDesignUtility.ActivationOf(eph.PlanetsPosition(p, p2dateOfBirth, mode).Longitude));
+            p => HumanDesignUtility.ActivationOf(eph.PlanetsPosition(p, p2dateOfBirth, mode).Longitude));
         P2DesignActivation = Definitions.HumanDesignDefaults.HumanDesignPlanets.ToDictionary(
             p => p,
-            p => Utility.HumanDesignUtility.ActivationOf(eph.PlanetsPosition(p, p2designDate, mode).Longitude));
-        Utility.HumanDesignUtility.CalculateState(P2PersonalityActivation, P2DesignActivation);
+            p => HumanDesignUtility.ActivationOf(eph.PlanetsPosition(p, p2designDate, mode).Longitude));
         
-        _p1activeGates = P1PersonalityActivation.Select(pair => pair.Value.Gate).ToHashSet();
-        _p1activeGates.UnionWith(P1DesignActivation.Select(pair => pair.Value.Gate).ToHashSet());
-        _p2activeGates = P2PersonalityActivation.Select(pair => pair.Value.Gate).ToHashSet();
-        _p2activeGates.UnionWith(P2DesignActivation.Select(pair => pair.Value.Gate).ToHashSet());
-        ActiveGates = _p1activeGates.ToHashSet();
-        ActiveGates.UnionWith(_p2activeGates);
+        HumanDesignUtility.CalculateState(P1PersonalityActivation, P1DesignActivation, P2PersonalityActivation, P2DesignActivation);
         
-        (ConnectedComponents, Splits) = GraphService.ConnectedCenters(Utility.HumanDesignUtility.ActiveChannels(ActiveGates));
+        _p1ActiveGates = P1PersonalityActivation.Select(pair => pair.Value.Gate).ToHashSet();
+        _p1ActiveGates.UnionWith(P1DesignActivation.Select(pair => pair.Value.Gate).ToHashSet());
+        _p2ActiveGates = P2PersonalityActivation.Select(pair => pair.Value.Gate).ToHashSet();
+        _p2ActiveGates.UnionWith(P2DesignActivation.Select(pair => pair.Value.Gate).ToHashSet());
+        ActiveGates = _p1ActiveGates.ToHashSet();
+        ActiveGates.UnionWith(_p2ActiveGates);
+        
+        (ConnectedComponents, Splits) = GraphService.ConnectedCenters(HumanDesignUtility.ActiveChannels(ActiveGates));
     }
 
-    private Dictionary<Channels, (CompositeChannelType, int)>? _activeChannels;
-    /// <summary>
-    /// Gets the active channels of the composite chart. The dictionary values are tuples of composite channel type (one of Companion,
-    /// Dominance, Compromise, Magnetic or None) and the dominating partner (1 or 2 correspond to the first or second parameter in the constructor).
-    /// The value will be calculated on the first call of this property.
-    /// </summary>
-    public Dictionary<Channels, (CompositeChannelType, int)> ActiveChannels
-    {
-        get
-        {
-            _activeChannels ??= _ActiveChannels();
-            return _activeChannels;
-        }
-    }
-
-    private SplitDefinitions? _splitDefinition;
-    /// <summary>
-    /// Gets the spilt definition associated with this chart.
-    /// If the value has already been calculated, it retrieves the calculated value.
-    /// The value will be calculated on the first call of this property.
-    /// </summary>
-    public SplitDefinitions SplitDefinition
-    {
-        get
-        {
-            _splitDefinition ??= _SplitDefinition();
-            return _splitDefinition!.Value;
-        }
-    }
-    
-    #region private Methods
-
-    private Dictionary<Channels, (CompositeChannelType, int)> _ActiveChannels()
-    {
-        var result = new Dictionary<Channels, (CompositeChannelType, int)>();
-        int gate1State;
-        int gate2State;
-        foreach (var channel in Enum.GetValues<Channels>())
-        {
-            gate1State = 0;
-            gate2State = 0;
-            var (gate1, gate2) = channel.ToGates();
-            if (_p1activeGates.Contains(gate1)) gate1State = 1;
-            if (_p2activeGates.Contains(gate1)) gate1State = gate1State == 1 ? 3 : 2;
-            if (_p1activeGates.Contains(gate2)) gate2State = 1;
-            if (_p2activeGates.Contains(gate2)) gate2State = gate2State == 1 ? 3 : 2;
-
-            if (gate1State == 0 || gate2State == 0)
-            {
-                continue;
-            }
-            if (gate1State == gate2State)
-            {
-                switch (gate1State)
-                {
-                    case 1:
-                        result[channel] = (CompositeChannelType.Dominance, 1);
-                        continue;
-                    case 2:
-                        result[channel] = (CompositeChannelType.Dominance, 2);
-                        continue;
-                    case 3:
-                        result[channel] = (CompositeChannelType.Companion, 3);
-                        continue;
-                }
-            }
-            if (gate1State == 3)
-            {
-                switch (gate2State)
-                {
-                    case 1:
-                        result[channel] = (CompositeChannelType.Compromise, 1);
-                        continue;
-                    case 2:
-                        result[channel] = (CompositeChannelType.Compromise, 2);
-                        continue;
-                }
-            }
-            if (gate2State == 3)
-            {
-                switch (gate1State)
-                {
-                    case 1:
-                        result[channel] = (CompositeChannelType.Compromise, 1);
-                        continue;
-                    case 2:
-                        result[channel] = (CompositeChannelType.Compromise, 2);
-                        continue;
-                }
-            }
-            
-            result[channel] = (CompositeChannelType.Magnetic, 0);
-        }
-
-        return result;
-    }
-    
-    private SplitDefinitions _SplitDefinition()
-    {
-        return Splits switch
-        {
-            0 => SplitDefinitions.Empty,
-            1 => SplitDefinitions.SingleDefinition,
-            2 => SplitDefinitions.SplitDefinition,
-            3 => SplitDefinitions.TripleSplit,
-            4 => SplitDefinitions.QuadrupleSplit,
-            _ => throw new ArgumentException($"To much splits: {Splits}")
-        };
-    }
-    
     #endregion
-    
 }

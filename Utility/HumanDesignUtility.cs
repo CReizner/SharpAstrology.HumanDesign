@@ -68,11 +68,31 @@ public static class HumanDesignUtility
         };
     }
     
+    /// <summary>
+    /// Determines the type of split definition based on the number of splits provided.
+    /// </summary>
+    /// <param name="splits">The number of splits.</param>
+    /// <returns>The corresponding SplitDefinitions enum.</returns>
+    /// <exception cref="ArgumentException">Thrown when the number of splits is not within the expected range (0-4).</exception>
+    public static SplitDefinitions SplitDefinition(int splits)
+    {
+        return splits switch
+        {
+            0 => SplitDefinitions.Empty,
+            1 => SplitDefinitions.SingleDefinition,
+            2 => SplitDefinitions.SplitDefinition,
+            3 => SplitDefinitions.TripleSplit,
+            4 => SplitDefinitions.QuadrupleSplit,
+            _ => throw new ArgumentException($"To much splits: {splits}")
+        };
+    }
+
     private static FixingState _getStateFromStatesTable(Planets planet, Gates gate, Lines line)
     {
         return planet switch
         {
-            Planets.Moon => (gate, line) switch {
+            Planets.Moon => (gate, line) switch
+            {
                 (Gates.Key1, Lines.One) => FixingState.Exalted,
                 (Gates.Key4, Lines.One) => FixingState.Exalted,
                 (Gates.Key4, Lines.Two) => FixingState.Exalted,
@@ -165,7 +185,8 @@ public static class HumanDesignUtility
                 (Gates.Key64, Lines.Four) => FixingState.Exalted,
                 _ => FixingState.None
             },
-            Planets.Uranus => (gate, line) switch {
+            Planets.Uranus => (gate, line) switch
+            {
                 (Gates.Key1, Lines.One) => FixingState.Detriment,
                 (Gates.Key1, Lines.Five) => FixingState.Detriment,
                 (Gates.Key2, Lines.Three) => FixingState.Detriment,
@@ -198,7 +219,8 @@ public static class HumanDesignUtility
                 (Gates.Key63, Lines.Two) => FixingState.Detriment,
                 _ => FixingState.None
             },
-            Planets.Venus => (gate, line) switch {
+            Planets.Venus => (gate, line) switch
+            {
                 (Gates.Key1, Lines.Two) => FixingState.Exalted,
                 (Gates.Key2, Lines.One) => FixingState.Exalted,
                 (Gates.Key2, Lines.Four) => FixingState.Exalted,
@@ -284,7 +306,8 @@ public static class HumanDesignUtility
                 (Gates.Key64, Lines.Six) => FixingState.Detriment,
                 _ => FixingState.None
             },
-            Planets.Mars => (gate, line) switch {
+            Planets.Mars => (gate, line) switch
+            {
                 (Gates.Key1, Lines.Two) => FixingState.Detriment,
                 (Gates.Key1, Lines.Three) => FixingState.Exalted,
                 (Gates.Key1, Lines.Five) => FixingState.Exalted,
@@ -410,7 +433,8 @@ public static class HumanDesignUtility
                 (Gates.Key64, Lines.Four) => FixingState.Detriment,
                 _ => FixingState.None
             },
-            Planets.Earth => (gate, line) switch {
+            Planets.Earth => (gate, line) switch
+            {
                 (Gates.Key1, Lines.Three) => FixingState.Detriment,
                 (Gates.Key1, Lines.Four) => FixingState.Exalted,
                 (Gates.Key1, Lines.Six) => FixingState.Exalted,
@@ -460,7 +484,8 @@ public static class HumanDesignUtility
                 (Gates.Key60, Lines.Two) => FixingState.Detriment,
                 _ => FixingState.None
             },
-            Planets.Jupiter => (gate, line) switch {
+            Planets.Jupiter => (gate, line) switch
+            {
                 (Gates.Key1, Lines.Four) => FixingState.Detriment,
                 (Gates.Key2, Lines.Three) => FixingState.Exalted,
                 (Gates.Key4, Lines.Five) => FixingState.Exalted,
@@ -552,7 +577,8 @@ public static class HumanDesignUtility
                 (Gates.Key64, Lines.Five) => FixingState.Detriment,
                 _ => FixingState.None
             },
-            Planets.Pluto => (gate, line) switch {
+            Planets.Pluto => (gate, line) switch
+            {
                 (Gates.Key1, Lines.Six) => FixingState.Detriment,
                 (Gates.Key3, Lines.Three) => FixingState.Detriment,
                 (Gates.Key3, Lines.Six) => FixingState.Detriment,
@@ -629,7 +655,8 @@ public static class HumanDesignUtility
                 (Gates.Key63, Lines.Six) => FixingState.Detriment,
                 _ => FixingState.None
             },
-            Planets.Saturn => (gate, line) switch {
+            Planets.Saturn => (gate, line) switch
+            {
                 (Gates.Key2, Lines.Two) => FixingState.Exalted,
                 (Gates.Key2, Lines.Six) => FixingState.Detriment,
                 (Gates.Key4, Lines.Four) => FixingState.Detriment,
@@ -682,7 +709,8 @@ public static class HumanDesignUtility
                 (Gates.Key64, Lines.Three) => FixingState.Exalted,
                 _ => FixingState.None
             },
-            Planets.Mercury => (gate, line) switch {
+            Planets.Mercury => (gate, line) switch
+            {
                 (Gates.Key2, Lines.Five) => FixingState.Exalted,
                 (Gates.Key2, Lines.Six) => FixingState.Exalted,
                 (Gates.Key3, Lines.One) => FixingState.Detriment,
@@ -742,7 +770,8 @@ public static class HumanDesignUtility
                 (Gates.Key64, Lines.Six) => FixingState.Exalted,
                 _ => FixingState.None
             },
-            Planets.Neptune => (gate, line) switch {
+            Planets.Neptune => (gate, line) switch
+            {
                 (Gates.Key3, Lines.Four) => FixingState.Exalted,
                 (Gates.Key5, Lines.Three) => FixingState.Exalted,
                 (Gates.Key5, Lines.Six) => FixingState.Exalted,
@@ -792,7 +821,8 @@ public static class HumanDesignUtility
                 (Gates.Key62, Lines.Five) => FixingState.Detriment,
                 _ => FixingState.None
             },
-            Planets.Sun => (gate, line) switch {
+            Planets.Sun => (gate, line) switch
+            {
                 (Gates.Key3, Lines.Six) => FixingState.Exalted,
                 (Gates.Key4, Lines.Four) => FixingState.Exalted,
                 (Gates.Key5, Lines.Four) => FixingState.Detriment,
@@ -867,13 +897,12 @@ public static class HumanDesignUtility
             _ => FixingState.None
         };
     }
-
+    
     private static FixingState _aggregateStateFromHarmonicGate(Gates gate, Lines line, Gates harmonicGate, 
-        Dictionary<Planets, Activation> personalityActivations,
-        Dictionary<Planets, Activation> designActivations)
+        Dictionary<Planets, Activation> activations)
     {
         var state = FixingState.None;
-        var states = personalityActivations
+        var states = activations
             .Where(x => x.Value.Gate == harmonicGate)
             .Select(x => _getStateFromStatesTable(x.Key, gate, line))
             .ToArray();
@@ -881,27 +910,10 @@ public static class HumanDesignUtility
         {
             state |= states.Aggregate((a, b) => a | b);
         }
-        
-        states = designActivations
-            .Where(x => x.Value.Gate == harmonicGate)
-            .Select(x => _getStateFromStatesTable(x.Key, gate, line))
-            .ToArray();
 
-        if (states.Length != 0)
-        {
-            state |= states.Aggregate((a, b) => a | b);
-        }
-        
         return state;
     }
     
-    /// <summary>
-    /// Determines the planets state, depending on the gate and line where it is situated and its harmonics.
-    /// </summary>
-    /// <param name="planet">The planet for which the state should be calculated.</param>
-    /// <param name="gate">The gate, where the planet is situated in.</param>
-    /// <param name="line">The line, where the planet is situated in.</param>
-    /// <returns></returns>
     internal static void CalculateState(Dictionary<Planets, Activation> personalityActivations,
         Dictionary<Planets, Activation> designActivations)
     {
@@ -910,8 +922,11 @@ public static class HumanDesignUtility
             activation.FixingState = _getStateFromStatesTable(planet, activation.Gate, activation.Line);
             foreach (var harmonicGate in activation.Gate.HarmonicGates())
             {
-                activation.FixingState |= _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, 
-                    personalityActivations, designActivations);
+                activation.FixingState |= _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, personalityActivations);
+                var fixingState = _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, designActivations);
+                if (activation.FixingState.HasFlag(fixingState)) continue;
+                activation.FixingState |= fixingState;
+                activation.FixingStateChangedByComparer = true;
             }
         }
         foreach (var (planet, activation) in designActivations)
@@ -919,9 +934,211 @@ public static class HumanDesignUtility
             activation.FixingState = _getStateFromStatesTable(planet, activation.Gate, activation.Line);
             foreach (var harmonicGate in activation.Gate.HarmonicGates())
             {
-                activation.FixingState |= _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, 
-                    personalityActivations, designActivations);
+                activation.FixingState |= _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, designActivations);
+                var fixingState = _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, personalityActivations);
+                if (activation.FixingState.HasFlag(fixingState)) continue;
+                activation.FixingState |= fixingState;
+                activation.FixingStateChangedByComparer = true;
             }
         }
     }
+    
+    internal static void CalculateState(
+        Dictionary<Planets, Activation> personalityActivations,
+        Dictionary<Planets, Activation> designActivations, 
+        Dictionary<Planets, Activation> transitActivations)
+    {
+        foreach (var (planet, activation) in personalityActivations)
+        {
+            foreach (var harmonicGate in activation.Gate.HarmonicGates())
+            {
+                activation.FixingState |= _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, personalityActivations);
+                activation.FixingState |= _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, designActivations);
+                var fixingState = _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, transitActivations);
+                if (activation.FixingState.HasFlag(fixingState)) continue;
+                activation.FixingState |= fixingState;
+                activation.FixingStateChangedByComparer = true;
+            }
+        }
+        
+        foreach (var (planet, activation) in designActivations)
+        {
+            foreach (var harmonicGate in activation.Gate.HarmonicGates())
+            {
+                activation.FixingState |= _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, personalityActivations);
+                activation.FixingState |= _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, designActivations);
+                var fixingState = _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, transitActivations);
+                if (activation.FixingState.HasFlag(fixingState)) continue;
+                activation.FixingState |= fixingState;
+                activation.FixingStateChangedByComparer = true;
+            }
+        }
+        
+        foreach (var (planet, activation) in transitActivations)
+        {
+            foreach (var harmonicGate in activation.Gate.HarmonicGates())
+            {
+                activation.FixingState |= _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, transitActivations);
+                var fixingState = _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, personalityActivations);
+                fixingState |= _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, designActivations);
+                if (activation.FixingState.HasFlag(fixingState)) continue;
+                activation.FixingState |= fixingState;
+                activation.FixingStateChangedByComparer = true;
+            }
+        }
+    }
+    
+    internal static void CalculateState(
+        Dictionary<Planets, Activation> personalityActivations1,
+        Dictionary<Planets, Activation> designActivations1, 
+        Dictionary<Planets, Activation> personalityActivations2,
+        Dictionary<Planets, Activation> designActivations2)
+    {
+        foreach (var (_, activation) in personalityActivations1)
+        {
+            foreach (var harmonicGate in activation.Gate.HarmonicGates())
+            {
+                activation.FixingState |= _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, personalityActivations1);
+                activation.FixingState |= _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, designActivations1);
+                var fixingState = _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, personalityActivations2);
+                fixingState |= _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, designActivations2);
+                if (activation.FixingState.HasFlag(fixingState)) continue;
+                activation.FixingState |= fixingState;
+                activation.FixingStateChangedByComparer = true;
+            }
+        }
+        
+        foreach (var (_, activation) in designActivations1)
+        {
+            foreach (var harmonicGate in activation.Gate.HarmonicGates())
+            {
+                activation.FixingState |= _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, personalityActivations1);
+                activation.FixingState |= _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, designActivations1);
+                var fixingState = _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, personalityActivations2);
+                fixingState |= _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, designActivations2);
+                if (activation.FixingState.HasFlag(fixingState)) continue;
+                activation.FixingState |= fixingState;
+                activation.FixingStateChangedByComparer = true;
+            }
+        }
+        
+        foreach (var (_, activation) in personalityActivations2)
+        {
+            foreach (var harmonicGate in activation.Gate.HarmonicGates())
+            {
+                activation.FixingState |= _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, personalityActivations2);
+                activation.FixingState |= _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, designActivations2);
+                var fixingState = _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, personalityActivations1);
+                fixingState |= _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, designActivations1);
+                if (activation.FixingState.HasFlag(fixingState)) continue;
+                activation.FixingState |= fixingState;
+                activation.FixingStateChangedByComparer = true;
+            }
+        }
+        
+        foreach (var (_, activation) in designActivations2)
+        {
+            foreach (var harmonicGate in activation.Gate.HarmonicGates())
+            {
+                activation.FixingState |= _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, personalityActivations2);
+                activation.FixingState |= _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, designActivations2);
+                var fixingState = _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, personalityActivations1);
+                fixingState |= _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, designActivations1);
+                if (activation.FixingState.HasFlag(fixingState)) continue;
+                activation.FixingState |= fixingState;
+                activation.FixingStateChangedByComparer = true;
+            }
+        }
+    }
+
+    internal static Dictionary<Gates, ActivationTypes> GateActivations(IEnumerable<Gates> gates1, IEnumerable<Gates> gates2)
+    {
+        var gateActivation = Enum.GetValues<Gates>().ToDictionary(x => x, x => ActivationTypes.None);
+        foreach (var gate in gates1)
+        {
+            gateActivation[gate] = ActivationTypes.FirstComparer;
+        }
+
+        foreach (var gate in gates2)
+        {
+            if (gateActivation[gate] == ActivationTypes.FirstComparer)
+            {
+                gateActivation[gate] = ActivationTypes.Mixed;
+            }
+            else
+            {
+                gateActivation[gate] = ActivationTypes.SecondComparer;
+            }
+        }
+
+        return gateActivation;
+    }
+
+    internal static Dictionary<Channels, ChannelActivationType> CompositeChannelActivations(
+        HashSet<Gates> gates1, HashSet<Gates> gates2)
+    {
+        var result = new Dictionary<Channels, ChannelActivationType>();
+        int gate1State;
+        int gate2State;
+        foreach (var channel in Enum.GetValues<Channels>())
+        {
+            gate1State = 0;
+            gate2State = 0;
+            var (gate1, gate2) = channel.ToGates();
+            if (gates1.Contains(gate1)) gate1State = 1;
+            if (gates2.Contains(gate1)) gate1State = gate1State == 1 ? 3 : 2;
+            if (gates1.Contains(gate2)) gate2State = 1;
+            if (gates2.Contains(gate2)) gate2State = gate2State == 1 ? 3 : 2;
+
+            if (gate1State == 0 || gate2State == 0)
+            {
+                result[channel] = ChannelActivationType.None;
+                continue;
+            }
+            if (gate1State == gate2State)
+            {
+                switch (gate1State)
+                {
+                    case 1:
+                        result[channel] = ChannelActivationType.FirstDominating;
+                        continue;
+                    case 2:
+                        result[channel] = ChannelActivationType.SecondDominating;
+                        continue;
+                    case 3:
+                        result[channel] = ChannelActivationType.Companion;
+                        continue;
+                }
+            }
+            if (gate1State == 3)
+            {
+                switch (gate2State)
+                {
+                    case 1:
+                        result[channel] = ChannelActivationType.CompromiseFirstDominating;
+                        continue;
+                    case 2:
+                        result[channel] = ChannelActivationType.CompromiseSecondDominating;
+                        continue;
+                }
+            }
+            if (gate2State == 3)
+            {
+                switch (gate1State)
+                {
+                    case 1:
+                        result[channel] = ChannelActivationType.CompromiseFirstDominating;
+                        continue;
+                    case 2:
+                        result[channel] = ChannelActivationType.CompromiseSecondDominating;
+                        continue;
+                }
+            }
+            
+            result[channel] = ChannelActivationType.Magnetic;
+        }
+
+        return result;
+    }
+
 }

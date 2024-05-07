@@ -113,11 +113,70 @@ foreach (var r in results)
 }
 ```
 
+### How to create a composite chart?
+Composite charts allow the mutual effects of the respective charts to be analyzed. 
+The most important components here are the channels. 
+Is there an interplay between gates of both channels? 
+Does one person dominate the channel of the other or are the activations equal?
+```C#
+using SharpAstrology.DataModels;
+using SharpAstrology.Enums;
+using SharpAstrology.Ephemerides;
+
+var date1 = new DateTime(1988, 9, 4, 1, 15, 0, DateTimeKind.Utc);
+var date2 = new DateTime(1990, 2, 6, 22, 55, 0, DateTimeKind.Utc);
+using var eph = new SwissEphemeridesService(ephType:EphType.Moshier).CreateContext();
+
+// Create composite chart
+var result = new HumanDesignCompositeChart(date1, date2, eph);
+
+foreach (var (channel, activationType) in result
+             .ChannelActivations
+             .Where(x=>x.Value != ChannelActivationType.None)
+             .OrderBy(x=>x.Value))
+{
+    Console.WriteLine($"{channel} - {activationType}");
+}
+// Key11Key56 - FirstDominating
+// Key12Key22 - FirstDominating
+// Key21Key45 - FirstDominating
+// Key47Key64 - FirstDominating
+// Key28Key38 - SecondDominating
+// Key10Key20 - CompromiseFirstDominating
+// Key18Key58 - CompromiseFirstDominating
+// Key23Key43 - CompromiseSecondDominating
+// Key4Key63 - Magnetic
+// Key5Key15 - Magnetic
+```
+
+### How to create a transit chart?
+```C#
+using SharpAstrology.DataModels;
+using SharpAstrology.Enums;
+using SharpAstrology.Ephemerides;
+
+var chart = new DateTime(1988, 9, 4, 1, 15, 0, DateTimeKind.Utc);
+var transit = new DateTime(2024, 5, 7, 12, 0, 0, DateTimeKind.Utc);
+using var eph = new SwissEphemeridesService(ephType:EphType.Moshier).CreateContext();
+
+// Create transit chart
+var result = new HumanDesignTransitChart(chart, transit, eph);
+
+foreach (var (channel, activationType) in result
+             .ChannelActivations
+             .Where(x=>x.Value != ChannelActivationType.None)
+             .OrderBy(x=>x.Value))
+{
+    Console.WriteLine($"{channel} - {activationType}");
+}
+```
+
+
 ## Future plans for v1.0.0
 - [x] Indicate if a planet is exalted, in detriment or juxtaposed in a position.
 - [x] Include option for sidereal chart calculation.
 - [x] If exact birth time is unknown, but a time spectrum is given, then all possible charts with probability can be calculated.
-- [x] Adding support for combined charts.
-- [ ] Adding support for transit charts
+- [x] Adding support for composite charts.
+- [x] Adding support for transit charts
 - [ ] Make chart calculation thread save.
 - [ ] Improve performance for chart calculations using parallelism and eliminating LINQ.
