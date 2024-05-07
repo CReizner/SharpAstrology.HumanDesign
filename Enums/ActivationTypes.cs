@@ -4,7 +4,7 @@
 public enum ActivationTypes
 {
     None,
-    FirstComparer,
-    SecondComparer,
+    FirstComparator,
+    SecondComparator,
     Mixed,
 }

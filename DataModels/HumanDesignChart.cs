@@ -200,7 +200,7 @@ public sealed class HumanDesignChart : IHumanDesignChart
     
     /// <summary>
     /// Determines whether the specified <see cref="HumanDesignChart"/> object is equal to the current object,
-    /// considering different levels of comparison depth specified by <see cref="ComparerDepth"/>.
+    /// considering different levels of comparison depth specified by <see cref="ComparatorDepth"/>.
     /// </summary>
     /// <param name="other">The <see cref="HumanDesignChart"/> object to compare with the current object.</param>
     /// <returns><c>true</c> if the specified object is equal to the current object; otherwise, <c>false</c>.</returns>
@@ -211,11 +211,11 @@ public sealed class HumanDesignChart : IHumanDesignChart
         
         foreach (var (p,a) in PersonalityActivation)
         {
-            if (!PersonalityActivation[p].Equals(other.PersonalityActivation[p], ComparerDepth.Gate)) return false;
+            if (!PersonalityActivation[p].Equals(other.PersonalityActivation[p], ComparatorDepth.Gate)) return false;
         }
         foreach (var (p,a) in DesignActivation)
         {
-            if (!DesignActivation[p].Equals(other.DesignActivation[p], ComparerDepth.Gate)) return false;
+            if (!DesignActivation[p].Equals(other.DesignActivation[p], ComparatorDepth.Gate)) return false;
         }
 
         if (PersonalityActivation[Planets.Sun].Line != other.PersonalityActivation[Planets.Sun].Line) return false;

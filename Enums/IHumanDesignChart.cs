@@ -3,7 +3,8 @@ namespace SharpAstrology.Enums;
 public interface IHumanDesignChart
 {
     /// <summary>
-    /// Gets a dictionary, where gates are mapped to there activation type. This property is useful for drawing the body graph.
+    /// Gets a dictionary, where gates are mapped to there activation type.
+    /// This property is useful for drawing the body graph.
     /// The value will be calculated on the first call of this property. 
     /// </summary>
     public Dictionary<Gates, ActivationTypes> GateActivations { get; }

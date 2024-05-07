@@ -1056,18 +1056,18 @@ public static class HumanDesignUtility
         var gateActivation = Enum.GetValues<Gates>().ToDictionary(x => x, x => ActivationTypes.None);
         foreach (var gate in gates1)
         {
-            gateActivation[gate] = ActivationTypes.FirstComparer;
+            gateActivation[gate] = ActivationTypes.FirstComparator;
         }
 
         foreach (var gate in gates2)
         {
-            if (gateActivation[gate] == ActivationTypes.FirstComparer)
+            if (gateActivation[gate] == ActivationTypes.FirstComparator)
             {
                 gateActivation[gate] = ActivationTypes.Mixed;
             }
             else
             {
-                gateActivation[gate] = ActivationTypes.SecondComparer;
+                gateActivation[gate] = ActivationTypes.SecondComparator;
             }
         }
 

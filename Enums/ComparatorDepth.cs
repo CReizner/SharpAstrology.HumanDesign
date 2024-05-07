@@ -1,6 +1,6 @@
 namespace SharpAstrology.Enums;
 
-internal enum ComparerDepth
+internal enum ComparatorDepth
 {
     Gate = 0,
     Line = 1,
