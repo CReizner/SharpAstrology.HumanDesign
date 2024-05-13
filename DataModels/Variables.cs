@@ -4,16 +4,16 @@ namespace SharpAstrology.DataModels;
 
 public sealed class Variables
 {
-    public Variable Digestion { get; set; }
-    public Variable Perspective { get; set; }
-    public Variable Environment { get; set; }
-    public Variable Awareness { get; set; }
+    public Variable Digestion { get; init; } = default!;
+    public Variable Perspective { get; init; }= default!;
+    public Variable Environment { get; init; }= default!;
+    public Variable Awareness { get; init; }= default!;
 }
 
 public sealed class Variable
 {
-    public Orientation Orientation { get; set; }
-    public Color Color { get; set; }
-    public Tone Tone{ get; set; }
-    public Base Base { get; set; }
+    public Orientation Orientation { get; init; }
+    public Color Color { get; init; }
+    public Tone Tone{ get; init; }
+    public Base Base { get; init; }
 } 
