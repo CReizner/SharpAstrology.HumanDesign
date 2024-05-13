@@ -171,6 +171,13 @@ foreach (var (channel, activationType) in result
 }
 ```
 
+### I would like to visualize a chart
+SharpAstrology provides Blazor components: [SharpAstrology.HumanDesign.BlazorComponents](https://github.com/CReizner/SharpAstrology.HumanDesign.BlazorComponents)
+
+```dotnet add package SharpAstrology.HumanDesign.BlazorComponents```
+
+![A Human Design chart example](https://github.com/CReizner/SharpAstrology.HumanDesign.BlazorComponents/blob/master/.github_assets/hd_chart_0.png)
+
 
 ## Future plans for v1.0.0
 - [x] Indicate if a planet is exalted, in detriment or juxtaposed in a position.
