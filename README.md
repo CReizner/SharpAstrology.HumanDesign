@@ -4,6 +4,19 @@
 
 This package is part of the SharpAstrology project. It provides all the tools to calculate the common Human Design Body Graph.
 
+## With this package you can calculate:
+- Human Design charts with:
+  - type
+  - profile
+  - incarnation cross
+  - split definition
+  - channel and gate activations
+  - strategy
+  - variables
+- Transit charts
+- Composite charts
+- Planetary states (exalted, detriment, juxtaposed)
+
 ## Install
 
 ```
@@ -198,11 +211,7 @@ SharpAstrology provides Blazor components: [SharpAstrology.HumanDesign.BlazorCom
 
 ![A Human Design chart example](https://github.com/CReizner/SharpAstrology.HumanDesign.BlazorComponents/blob/master/.github_assets/hd_chart_0.png)
 
-
-## Future plans for v1.0.0
-- [x] Indicate if a planet is exalted, in detriment or juxtaposed in a position.
-- [x] Include option for sidereal chart calculation.
-- [x] If exact birth time is unknown, but a time spectrum is given, then all possible charts with probability can be calculated.
-- [x] Adding support for composite charts.
-- [x] Adding support for transit charts
-- [ ] Improve performance for chart calculations.
+### Notes on performance
+- You can save about 18% of construction time for a HumanDesignChart class, if you save and reuse the julian date.
+- Reuse already calculated charts if constructing a composite or transit chart.
+- The calculation speed is strongly dependent on the IEphemerides implementation.

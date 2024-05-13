@@ -913,143 +913,146 @@ public static class HumanDesignUtility
 
         return state;
     }
-    
-    internal static void CalculateState(Dictionary<Planets, Activation> personalityActivations,
-        Dictionary<Planets, Activation> designActivations)
+
+    internal static PlanetaryFixation CalculateState(Planets planet,
+        Dictionary<Planets, Activation> activations,
+        Dictionary<Planets, Activation> comparerActivations)
     {
-        foreach (var (planet, activation) in personalityActivations)
+        var result = new PlanetaryFixation();
+        var activation = activations[planet];
+        result.State = _getStateFromStatesTable(planet, activation.Gate, activation.Line);
+        foreach (var harmonicGate in activation.Gate.HarmonicGates())
         {
-            activation.FixingState = _getStateFromStatesTable(planet, activation.Gate, activation.Line);
-            foreach (var harmonicGate in activation.Gate.HarmonicGates())
-            {
-                activation.FixingState |= _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, personalityActivations);
-                var fixingState = _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, designActivations);
-                if (activation.FixingState.HasFlag(fixingState)) continue;
-                activation.FixingState |= fixingState;
-                activation.FixingStateChangedByComparer = true;
-            }
+            result.State |= _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, activations);
+            var fixingState = _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, comparerActivations);
+            if (result.State.HasFlag(fixingState)) continue;
+            result.State |= fixingState;
+            result.FixingStateChangedByComparer = true;
         }
-        foreach (var (planet, activation) in designActivations)
-        {
-            activation.FixingState = _getStateFromStatesTable(planet, activation.Gate, activation.Line);
-            foreach (var harmonicGate in activation.Gate.HarmonicGates())
-            {
-                activation.FixingState |= _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, designActivations);
-                var fixingState = _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, personalityActivations);
-                if (activation.FixingState.HasFlag(fixingState)) continue;
-                activation.FixingState |= fixingState;
-                activation.FixingStateChangedByComparer = true;
-            }
-        }
+
+        return result;
     }
-    
-    internal static void CalculateState(
-        Dictionary<Planets, Activation> personalityActivations,
-        Dictionary<Planets, Activation> designActivations, 
-        Dictionary<Planets, Activation> transitActivations)
+
+    internal static PlanetaryFixation CalculateState(Planets planet,
+        Dictionary<Planets, Activation> activations1,
+        Dictionary<Planets, Activation> activations2,
+        Dictionary<Planets, Activation> activations3,
+        bool firstComparator = false)
     {
-        foreach (var (planet, activation) in personalityActivations)
+        var result = new PlanetaryFixation();
+        var activation = activations1[planet];
+        result.State = _getStateFromStatesTable(planet, activation.Gate, activation.Line);
+        if (firstComparator)
         {
             foreach (var harmonicGate in activation.Gate.HarmonicGates())
             {
-                activation.FixingState |= _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, personalityActivations);
-                activation.FixingState |= _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, designActivations);
-                var fixingState = _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, transitActivations);
-                if (activation.FixingState.HasFlag(fixingState)) continue;
-                activation.FixingState |= fixingState;
-                activation.FixingStateChangedByComparer = true;
+                result.State |= _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, activations1);
+                var fixingState = _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, activations2);
+                fixingState |= _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, activations3);
+                if (result.State.HasFlag(fixingState)) continue;
+                result.State |= fixingState;
+                result.FixingStateChangedByComparer = true;
             }
+
+            return result;
         }
-        
-        foreach (var (planet, activation) in designActivations)
+        foreach (var harmonicGate in activation.Gate.HarmonicGates())
         {
-            foreach (var harmonicGate in activation.Gate.HarmonicGates())
-            {
-                activation.FixingState |= _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, personalityActivations);
-                activation.FixingState |= _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, designActivations);
-                var fixingState = _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, transitActivations);
-                if (activation.FixingState.HasFlag(fixingState)) continue;
-                activation.FixingState |= fixingState;
-                activation.FixingStateChangedByComparer = true;
-            }
+            result.State |= _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, activations1);
+            result.State |= _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, activations2);
+            var fixingState = _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, activations3);
+            if (result.State.HasFlag(fixingState)) continue;
+            result.State |= fixingState;
+            result.FixingStateChangedByComparer = true;
         }
-        
-        foreach (var (planet, activation) in transitActivations)
-        {
-            foreach (var harmonicGate in activation.Gate.HarmonicGates())
-            {
-                activation.FixingState |= _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, transitActivations);
-                var fixingState = _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, personalityActivations);
-                fixingState |= _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, designActivations);
-                if (activation.FixingState.HasFlag(fixingState)) continue;
-                activation.FixingState |= fixingState;
-                activation.FixingStateChangedByComparer = true;
-            }
-        }
+        return result;
     }
-    
-    internal static void CalculateState(
-        Dictionary<Planets, Activation> personalityActivations1,
-        Dictionary<Planets, Activation> designActivations1, 
-        Dictionary<Planets, Activation> personalityActivations2,
-        Dictionary<Planets, Activation> designActivations2)
+
+    internal static PlanetaryFixation CalculateState(Planets planet,
+        Dictionary<Planets, Activation> activations1,
+        Dictionary<Planets, Activation> activations2,
+        Dictionary<Planets, Activation> comparatorActivations1,
+        Dictionary<Planets, Activation> comparatorActivations2)
     {
-        foreach (var (_, activation) in personalityActivations1)
+        var result = new PlanetaryFixation();
+        var activation = activations1[planet];
+        result.State = _getStateFromStatesTable(planet, activation.Gate, activation.Line);
+        foreach (var harmonicGate in activation.Gate.HarmonicGates())
         {
-            foreach (var harmonicGate in activation.Gate.HarmonicGates())
-            {
-                activation.FixingState |= _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, personalityActivations1);
-                activation.FixingState |= _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, designActivations1);
-                var fixingState = _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, personalityActivations2);
-                fixingState |= _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, designActivations2);
-                if (activation.FixingState.HasFlag(fixingState)) continue;
-                activation.FixingState |= fixingState;
-                activation.FixingStateChangedByComparer = true;
-            }
+            result.State |= _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, activations1);
+            result.State |= _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, activations2);
+            var fixingState = _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, comparatorActivations1);
+            fixingState |= _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, comparatorActivations2);
+            if (result.State.HasFlag(fixingState)) continue;
+            result.State |= fixingState;
+            result.FixingStateChangedByComparer = true;
         }
         
-        foreach (var (_, activation) in designActivations1)
-        {
-            foreach (var harmonicGate in activation.Gate.HarmonicGates())
-            {
-                activation.FixingState |= _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, personalityActivations1);
-                activation.FixingState |= _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, designActivations1);
-                var fixingState = _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, personalityActivations2);
-                fixingState |= _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, designActivations2);
-                if (activation.FixingState.HasFlag(fixingState)) continue;
-                activation.FixingState |= fixingState;
-                activation.FixingStateChangedByComparer = true;
-            }
-        }
-        
-        foreach (var (_, activation) in personalityActivations2)
-        {
-            foreach (var harmonicGate in activation.Gate.HarmonicGates())
-            {
-                activation.FixingState |= _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, personalityActivations2);
-                activation.FixingState |= _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, designActivations2);
-                var fixingState = _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, personalityActivations1);
-                fixingState |= _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, designActivations1);
-                if (activation.FixingState.HasFlag(fixingState)) continue;
-                activation.FixingState |= fixingState;
-                activation.FixingStateChangedByComparer = true;
-            }
-        }
-        
-        foreach (var (_, activation) in designActivations2)
-        {
-            foreach (var harmonicGate in activation.Gate.HarmonicGates())
-            {
-                activation.FixingState |= _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, personalityActivations2);
-                activation.FixingState |= _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, designActivations2);
-                var fixingState = _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, personalityActivations1);
-                fixingState |= _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, designActivations1);
-                if (activation.FixingState.HasFlag(fixingState)) continue;
-                activation.FixingState |= fixingState;
-                activation.FixingStateChangedByComparer = true;
-            }
-        }
+        return result;
     }
+
+    // internal static void CalculateState(
+    //     Dictionary<Planets, Activation> personalityActivations1,
+    //     Dictionary<Planets, Activation> designActivations1, 
+    //     Dictionary<Planets, Activation> personalityActivations2,
+    //     Dictionary<Planets, Activation> designActivations2)
+    // {
+    //     foreach (var (_, activation) in personalityActivations1)
+    //     {
+    //         foreach (var harmonicGate in activation.Gate.HarmonicGates())
+    //         {
+    //             activation.FixingState |= _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, personalityActivations1);
+    //             activation.FixingState |= _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, designActivations1);
+    //             var fixingState = _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, personalityActivations2);
+    //             fixingState |= _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, designActivations2);
+    //             if (activation.FixingState.HasFlag(fixingState)) continue;
+    //             activation.FixingState |= fixingState;
+    //             activation.FixingStateChangedByComparer = true;
+    //         }
+    //     }
+    //     
+    //     foreach (var (_, activation) in designActivations1)
+    //     {
+    //         foreach (var harmonicGate in activation.Gate.HarmonicGates())
+    //         {
+    //             activation.FixingState |= _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, personalityActivations1);
+    //             activation.FixingState |= _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, designActivations1);
+    //             var fixingState = _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, personalityActivations2);
+    //             fixingState |= _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, designActivations2);
+    //             if (activation.FixingState.HasFlag(fixingState)) continue;
+    //             activation.FixingState |= fixingState;
+    //             activation.FixingStateChangedByComparer = true;
+    //         }
+    //     }
+    //     
+    //     foreach (var (_, activation) in personalityActivations2)
+    //     {
+    //         foreach (var harmonicGate in activation.Gate.HarmonicGates())
+    //         {
+    //             activation.FixingState |= _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, personalityActivations2);
+    //             activation.FixingState |= _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, designActivations2);
+    //             var fixingState = _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, personalityActivations1);
+    //             fixingState |= _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, designActivations1);
+    //             if (activation.FixingState.HasFlag(fixingState)) continue;
+    //             activation.FixingState |= fixingState;
+    //             activation.FixingStateChangedByComparer = true;
+    //         }
+    //     }
+    //     
+    //     foreach (var (_, activation) in designActivations2)
+    //     {
+    //         foreach (var harmonicGate in activation.Gate.HarmonicGates())
+    //         {
+    //             activation.FixingState |= _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, personalityActivations2);
+    //             activation.FixingState |= _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, designActivations2);
+    //             var fixingState = _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, personalityActivations1);
+    //             fixingState |= _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, designActivations1);
+    //             if (activation.FixingState.HasFlag(fixingState)) continue;
+    //             activation.FixingState |= fixingState;
+    //             activation.FixingStateChangedByComparer = true;
+    //         }
+    //     }
+    // }
 
     internal static Dictionary<Gates, ActivationTypes> GateActivations(IEnumerable<Gates> gates1, IEnumerable<Gates> gates2)
     {

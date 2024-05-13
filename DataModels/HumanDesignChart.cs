@@ -1,3 +1,4 @@
+using System.Runtime.InteropServices.JavaScript;
 using SharpAstrology.Interfaces;
 using SharpAstrology.Enums;
 using SharpAstrology.ExtensionMethods;
@@ -22,11 +23,39 @@ public sealed class HumanDesignChart : IHumanDesignChart
     /// Gets a dictionary of personality activations corresponding to each celestial body. 
     /// </summary>
     public Dictionary<Planets, Activation> PersonalityActivation { get; }
-    
+
+    private Dictionary<Planets, PlanetaryFixation>? _personalityFixation;
+    /// <summary>
+    /// Gets a dictionary of planetary fixing states for each personality planet.
+    /// The value will be calculated on the first call of this property.
+    /// </summary>
+    public Dictionary<Planets, PlanetaryFixation> PersonalityFixation
+    {
+        get
+        {
+            _personalityFixation ??= _planetaryFixations(PersonalityActivation, DesignActivation);
+            return _personalityFixation;
+        }
+    }
+
     /// <summary>
     /// Gets a dictionary of design activations corresponding to each celestial body. 
     /// </summary>
     public Dictionary<Planets, Activation> DesignActivation { get; }
+
+    private Dictionary<Planets, PlanetaryFixation>? _designFixation;
+    /// <summary>
+    /// Gets a dictionary of planetary fixing states for each design planet.
+    /// The value will be calculated on the first call of this property.
+    /// </summary>
+    public Dictionary<Planets, PlanetaryFixation> DesignFixation
+    {
+        get
+        {
+            _designFixation ??= _planetaryFixations(DesignActivation, PersonalityActivation);
+            return _designFixation;
+        }
+    }
 
     /// <summary>
     /// Gets a dictionary of connected components, where each center is associated with its component id.
@@ -182,15 +211,11 @@ public sealed class HumanDesignChart : IHumanDesignChart
     /// <exception cref="ArgumentException">Thrown if dateOfBirth or designDate parameters are not in UTC.</exception>
     public HumanDesignChart(DateTime dateOfBirth, DateTime designDate, IEphemerides eph, EphCalculationMode mode = EphCalculationMode.Tropic)
     {
-        PersonalityActivation = Definitions.HumanDesignDefaults.HumanDesignPlanets.ToDictionary(
-            p => p,
-            p => HumanDesignUtility.ActivationOf(eph.PlanetsPosition(p, dateOfBirth, mode).Longitude));
-        DesignActivation = Definitions.HumanDesignDefaults.HumanDesignPlanets.ToDictionary(
-            p => p,
-            p => HumanDesignUtility.ActivationOf(eph.PlanetsPosition(p, designDate, mode).Longitude));
+        PersonalityActivation = _PlanetActivations(eph, dateOfBirth, mode);
+        DesignActivation = _PlanetActivations(eph, designDate, mode);
         _personalityGates = PersonalityActivation.Values.Select(x => x.Gate).ToHashSet();
         _designGates = DesignActivation.Values.Select(x => x.Gate).ToHashSet();
-        HumanDesignUtility.CalculateState(PersonalityActivation, DesignActivation);
+        // HumanDesignUtility.CalculateState(PersonalityActivation, DesignActivation);
         (ConnectedComponents, Splits) = GraphService.ConnectedCenters(HumanDesignUtility.ActiveChannels(ActiveGates));
     }
     
@@ -376,28 +401,40 @@ public sealed class HumanDesignChart : IHumanDesignChart
     
     private Variables _Variables()
     {
+        var pSunActivation = PersonalityActivation[Planets.Sun];
+        var dSunActivation = DesignActivation[Planets.Sun];
+        var pNodeActivation = PersonalityActivation[Planets.NorthNode];
+        var dNodeActivation = DesignActivation[Planets.NorthNode];
         return new Variables
         {
-            Digestion = (
-                DesignActivation[Planets.Sun].Tone.ToOrientation(),
-                DesignActivation[Planets.Sun].Color, 
-                DesignActivation[Planets.Sun].Tone,
-                DesignActivation[Planets.Sun].Base),
-            Perspective = (
-                PersonalityActivation[Planets.Sun].Tone.ToOrientation(),
-                PersonalityActivation[Planets.Sun].Color, 
-                PersonalityActivation[Planets.Sun].Tone,
-                PersonalityActivation[Planets.Sun].Base),
-            Environment = (
-                DesignActivation[Planets.NorthNode].Tone.ToOrientation(),
-                DesignActivation[Planets.NorthNode].Color, 
-                DesignActivation[Planets.NorthNode].Tone,
-                DesignActivation[Planets.NorthNode].Base),
-            Awareness = (
-                PersonalityActivation[Planets.NorthNode].Tone.ToOrientation(),
-                PersonalityActivation[Planets.NorthNode].Color, 
-                PersonalityActivation[Planets.NorthNode].Tone,
-                PersonalityActivation[Planets.NorthNode].Base),
+            Digestion = new()
+            {
+                Orientation = dSunActivation.Tone.ToOrientation(),
+                Color = dSunActivation.Color, 
+                Tone = dSunActivation.Tone,
+                Base = dSunActivation.Base
+            },
+            Perspective = new()
+            {
+                Orientation = pSunActivation.Tone.ToOrientation(),
+                Color = pSunActivation.Color, 
+                Tone = pSunActivation.Tone,
+                Base = pSunActivation.Base
+            },
+            Environment = new ()
+            {
+                Orientation = dNodeActivation.Tone.ToOrientation(),
+                Color = dNodeActivation.Color, 
+                Tone = dNodeActivation.Tone,
+                Base = dNodeActivation.Base
+            },
+            Awareness = new ()
+            {
+                Orientation = pNodeActivation.Tone.ToOrientation(),
+                Color = pNodeActivation.Color, 
+                Tone = pNodeActivation.Tone,
+                Base = pNodeActivation.Base
+            }
         };
     }
 
@@ -405,6 +442,25 @@ public sealed class HumanDesignChart : IHumanDesignChart
     {
         return (PersonalityActivation[Planets.Sun].Gate, Profile.ToAngle())
             .ToIncarnationCross();
+    }
+    
+    private Dictionary<Planets, Activation> _PlanetActivations(IEphemerides eph, DateTime date, EphCalculationMode mode = EphCalculationMode.Tropic)
+    {
+        var result = new Dictionary<Planets, Activation>();
+        foreach (var p in Definitions.HumanDesignDefaults.HumanDesignPlanets)
+        {
+            result[p] = HumanDesignUtility.ActivationOf(eph.PlanetsPosition(p, date, mode).Longitude);
+        }
+
+        return result;
+    }
+
+    private Dictionary<Planets, PlanetaryFixation> _planetaryFixations(
+        Dictionary<Planets, Activation> activations,
+        Dictionary<Planets, Activation> comparerActivations)
+    {
+        return activations.ToDictionary(p => p.Key,
+            p => HumanDesignUtility.CalculateState(p.Key, activations, comparerActivations));
     }
 
     #endregion

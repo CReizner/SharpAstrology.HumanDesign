@@ -15,15 +15,57 @@ public sealed class HumanDesignTransitChart : IHumanDesignChart
     /// </summary>
     public Dictionary<Planets, Activation> PersonalityActivation { get; }
     
+    private Dictionary<Planets, PlanetaryFixation>? _personalityFixation;
+    /// <summary>
+    /// Gets a dictionary of planetary fixing states for each personality planet.
+    /// The value will be calculated on the first call of this property.
+    /// </summary>
+    public Dictionary<Planets, PlanetaryFixation> PersonalityFixation
+    {
+        get
+        {
+            _personalityFixation ??= _planetaryFixations(PersonalityActivation, DesignActivation, TransitActivation);
+            return _personalityFixation;
+        }
+    }
+    
     /// <summary>
     /// Gets a dictionary of design activations corresponding to each celestial body. 
     /// </summary>
     public Dictionary<Planets, Activation> DesignActivation { get; }
     
+    private Dictionary<Planets, PlanetaryFixation>? _designFixation;
+    /// <summary>
+    /// Gets a dictionary of planetary fixing states for each design planet.
+    /// The value will be calculated on the first call of this property.
+    /// </summary>
+    public Dictionary<Planets, PlanetaryFixation> DesignFixation
+    {
+        get
+        {
+            _designFixation ??= _planetaryFixations(DesignActivation, PersonalityActivation, TransitActivation);
+            return _designFixation;
+        }
+    }
+    
     /// <summary>
     /// Gets a dictionary of transit activations corresponding to each celestial body. 
     /// </summary>
     public Dictionary<Planets, Activation> TransitActivation { get; }
+    
+    private Dictionary<Planets, PlanetaryFixation>? _transitFixation;
+    /// <summary>
+    /// Gets a dictionary of planetary fixing states for each transit planet.
+    /// The value will be calculated on the first call of this property.
+    /// </summary>
+    public Dictionary<Planets, PlanetaryFixation> TransitFixation
+    {
+        get
+        {
+            _transitFixation ??= _planetaryFixations(TransitActivation, PersonalityActivation, DesignActivation, true);
+            return _transitFixation;
+        }
+    }
 
     /// <summary>
     /// Gets a dictionary of connected components, where each center is associated with its components' id.
@@ -80,8 +122,17 @@ public sealed class HumanDesignTransitChart : IHumanDesignChart
         ActiveGates = _personActiveGates.ToHashSet();
         ActiveGates.UnionWith(_transitActiveGates);
         (ConnectedComponents, Splits) = GraphService.ConnectedCenters(HumanDesignUtility.ActiveChannels(ActiveGates));
-        HumanDesignUtility.CalculateState(PersonalityActivation, DesignActivation, TransitActivation);
     }
     
     #endregion
+    
+    private Dictionary<Planets, PlanetaryFixation> _planetaryFixations(
+        Dictionary<Planets, Activation> activations1,
+        Dictionary<Planets, Activation> activations2,
+        Dictionary<Planets, Activation> activations3,
+        bool firstComparator = false)
+    {
+        return activations1.ToDictionary(p => p.Key,
+            p => HumanDesignUtility.CalculateState(p.Key, activations1, activations2, activations3, firstComparator));
+    }
 }

@@ -16,20 +16,76 @@ public sealed class HumanDesignCompositeChart : IHumanDesignChart
     /// </summary>
     public Dictionary<Planets, Activation> P1PersonalityActivation { get; }
     
+    private Dictionary<Planets, PlanetaryFixation>? _p1PersonalityFixation;
+    /// <summary>
+    /// Gets a dictionary of planetary fixing states for each personality planet of person 1.
+    /// The value will be calculated on the first call of this property.
+    /// </summary>
+    public Dictionary<Planets, PlanetaryFixation> P1PersonalityFixation
+    {
+        get
+        {
+            _p1PersonalityFixation ??= _planetaryFixations(P1PersonalityActivation, P1DesignActivation, P2PersonalityActivation, P2DesignActivation);
+            return _p1PersonalityFixation;
+        }
+    }
+    
     /// <summary>
     /// Gets a dictionary of design activations corresponding to each celestial body for person 1. 
     /// </summary>
     public Dictionary<Planets, Activation> P1DesignActivation { get; }
+    
+    private Dictionary<Planets, PlanetaryFixation>? _p1DesignFixation;
+    /// <summary>
+    /// Gets a dictionary of planetary fixing states for each personality planet of person 1.
+    /// The value will be calculated on the first call of this property.
+    /// </summary>
+    public Dictionary<Planets, PlanetaryFixation> P1DesignFixation
+    {
+        get
+        {
+            _p1DesignFixation ??= _planetaryFixations(P1DesignActivation, P1PersonalityActivation, P2PersonalityActivation, P2DesignActivation);
+            return _p1DesignFixation;
+        }
+    }
     
     /// <summary>
     /// Gets a dictionary of personality activations corresponding to each celestial body for person 2. 
     /// </summary>
     public Dictionary<Planets, Activation> P2PersonalityActivation { get; }
     
+    private Dictionary<Planets, PlanetaryFixation>? _p2PersonalityFixation;
+    /// <summary>
+    /// Gets a dictionary of planetary fixing states for each personality planet of person 2.
+    /// The value will be calculated on the first call of this property.
+    /// </summary>
+    public Dictionary<Planets, PlanetaryFixation> P2PersonalityFixation
+    {
+        get
+        {
+            _p2PersonalityFixation ??= _planetaryFixations(P2PersonalityActivation, P2DesignActivation, P1PersonalityActivation, P1DesignActivation);
+            return _p2PersonalityFixation;
+        }
+    }
+    
     /// <summary>
     /// Gets a dictionary of design activations corresponding to each celestial body for person 2. 
     /// </summary>
     public Dictionary<Planets, Activation> P2DesignActivation { get; }
+    
+    private Dictionary<Planets, PlanetaryFixation>? _p2DesignFixation;
+    /// <summary>
+    /// Gets a dictionary of planetary fixing states for each personality planet of person 2.
+    /// The value will be calculated on the first call of this property.
+    /// </summary>
+    public Dictionary<Planets, PlanetaryFixation> P2DesignFixation
+    {
+        get
+        {
+            _p2DesignFixation ??= _planetaryFixations(P2DesignActivation, P2PersonalityActivation, P1PersonalityActivation, P1DesignActivation);
+            return _p2DesignFixation;
+        }
+    }
     
     /// <summary>
     /// Gets a dictionary of connected components, where each center is associated with its components' id.
@@ -145,8 +201,6 @@ public sealed class HumanDesignCompositeChart : IHumanDesignChart
             p => p,
             p => HumanDesignUtility.ActivationOf(eph.PlanetsPosition(p, p2designDate, mode).Longitude));
         
-        HumanDesignUtility.CalculateState(P1PersonalityActivation, P1DesignActivation, P2PersonalityActivation, P2DesignActivation);
-        
         _p1ActiveGates = P1PersonalityActivation.Select(pair => pair.Value.Gate).ToHashSet();
         _p1ActiveGates.UnionWith(P1DesignActivation.Select(pair => pair.Value.Gate).ToHashSet());
         _p2ActiveGates = P2PersonalityActivation.Select(pair => pair.Value.Gate).ToHashSet();
@@ -158,4 +212,14 @@ public sealed class HumanDesignCompositeChart : IHumanDesignChart
     }
 
     #endregion
+    
+    private Dictionary<Planets, PlanetaryFixation> _planetaryFixations(
+        Dictionary<Planets, Activation> activations1,
+        Dictionary<Planets, Activation> activations2,
+        Dictionary<Planets, Activation> comparatorActivations1,
+        Dictionary<Planets, Activation> comparatorActivations2)
+    {
+        return activations1.ToDictionary(p => p.Key,
+            p => HumanDesignUtility.CalculateState(p.Key, activations1, activations2, comparatorActivations1, comparatorActivations2));
+    }
 }
