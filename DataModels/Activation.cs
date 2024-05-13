@@ -36,18 +36,6 @@ public sealed class Activation
     public Base Base { get; init; }
 
     /// <summary>
-    /// Gets the planets fixing state of the activation. Depending on the gate and line where the planet is situated, it can
-    /// be in exaltation, detriment or both or no special state.
-    /// </summary>
-    public FixingState FixingState { get; set; } = FixingState.None;
-
-    /// <summary>
-    /// If a fixing state changes due to a comparison set of celestial objects, such as transits or a partner chart, then this value is true.
-    /// In the case of a individual chart, this means that if a fixing state of a personal planet is changed by a design planet (or vice versa), then this value is true.
-    /// </summary>
-    public bool FixingStateChangedByComparer { get; set; } = false;
-
-    /// <summary>
     /// Determines whether the specified <see cref="Activation"/> object is equal to the current object,
     /// considering different levels of comparison depth specified by <see cref="ComparatorDepth"/>.
     /// </summary>

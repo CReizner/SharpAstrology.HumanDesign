@@ -920,13 +920,13 @@ public static class HumanDesignUtility
     {
         var result = new PlanetaryFixation();
         var activation = activations[planet];
-        result.State = _getStateFromStatesTable(planet, activation.Gate, activation.Line);
+        result.FixingState = _getStateFromStatesTable(planet, activation.Gate, activation.Line);
         foreach (var harmonicGate in activation.Gate.HarmonicGates())
         {
-            result.State |= _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, activations);
+            result.FixingState |= _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, activations);
             var fixingState = _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, comparerActivations);
-            if (result.State.HasFlag(fixingState)) continue;
-            result.State |= fixingState;
+            if (result.FixingState.HasFlag(fixingState)) continue;
+            result.FixingState |= fixingState;
             result.FixingStateChangedByComparer = true;
         }
 
@@ -941,16 +941,16 @@ public static class HumanDesignUtility
     {
         var result = new PlanetaryFixation();
         var activation = activations1[planet];
-        result.State = _getStateFromStatesTable(planet, activation.Gate, activation.Line);
+        result.FixingState = _getStateFromStatesTable(planet, activation.Gate, activation.Line);
         if (firstComparator)
         {
             foreach (var harmonicGate in activation.Gate.HarmonicGates())
             {
-                result.State |= _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, activations1);
+                result.FixingState |= _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, activations1);
                 var fixingState = _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, activations2);
                 fixingState |= _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, activations3);
-                if (result.State.HasFlag(fixingState)) continue;
-                result.State |= fixingState;
+                if (result.FixingState.HasFlag(fixingState)) continue;
+                result.FixingState |= fixingState;
                 result.FixingStateChangedByComparer = true;
             }
 
@@ -958,11 +958,11 @@ public static class HumanDesignUtility
         }
         foreach (var harmonicGate in activation.Gate.HarmonicGates())
         {
-            result.State |= _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, activations1);
-            result.State |= _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, activations2);
+            result.FixingState |= _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, activations1);
+            result.FixingState |= _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, activations2);
             var fixingState = _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, activations3);
-            if (result.State.HasFlag(fixingState)) continue;
-            result.State |= fixingState;
+            if (result.FixingState.HasFlag(fixingState)) continue;
+            result.FixingState |= fixingState;
             result.FixingStateChangedByComparer = true;
         }
         return result;
@@ -976,15 +976,15 @@ public static class HumanDesignUtility
     {
         var result = new PlanetaryFixation();
         var activation = activations1[planet];
-        result.State = _getStateFromStatesTable(planet, activation.Gate, activation.Line);
+        result.FixingState = _getStateFromStatesTable(planet, activation.Gate, activation.Line);
         foreach (var harmonicGate in activation.Gate.HarmonicGates())
         {
-            result.State |= _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, activations1);
-            result.State |= _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, activations2);
+            result.FixingState |= _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, activations1);
+            result.FixingState |= _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, activations2);
             var fixingState = _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, comparatorActivations1);
             fixingState |= _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, comparatorActivations2);
-            if (result.State.HasFlag(fixingState)) continue;
-            result.State |= fixingState;
+            if (result.FixingState.HasFlag(fixingState)) continue;
+            result.FixingState |= fixingState;
             result.FixingStateChangedByComparer = true;
         }
         
