@@ -85,6 +85,26 @@ Console.WriteLine($"Awareness: {chart.Variables.Awareness.Orientation}, {chart.V
 // Awareness: Left, 3-1
 ```
 
+### Notes on parallelism with SharpAstrology.SwissEph
+If you are using the **IEphemerides** implementation from **SharpAstrology.SwissEph**, then the only option to calculate charts in parallel is to create one IEphemerides context for each chart you want to calculate. 
+The underlying bindings, provided by **SwissEphNet**, are not thread save.
+```C#
+using SharpAstrology.DataModels;
+using SharpAstrology.Ephemerides;
+using SharpAstrology.HumanDesign.Benchmarks;
+
+SwissEphemeridesService ephService =
+    new SwissEphemeridesService("[PATH_TO_EPHE_FILES]");
+DateTime start = new DateTime(1988, 9, 4, 0, 0, 0, DateTimeKind.Utc);
+
+// works...
+Parallel.Invoke(
+    () => new HumanDesignChart(start, ephService.CreateContext()),
+    () => new HumanDesignChart(start, ephService.CreateContext())
+    );
+```
+
+
 ### If you don't know the exact time of birth
 
 You can specify a time range and see which different charts appear in this period. Different means that the charts differ in at least one active gate or in the line of the sun.
@@ -185,5 +205,4 @@ SharpAstrology provides Blazor components: [SharpAstrology.HumanDesign.BlazorCom
 - [x] If exact birth time is unknown, but a time spectrum is given, then all possible charts with probability can be calculated.
 - [x] Adding support for composite charts.
 - [x] Adding support for transit charts
-- [ ] Make chart calculation thread save.
-- [ ] Improve performance for chart calculations using parallelism and eliminating LINQ.
+- [ ] Improve performance for chart calculations.

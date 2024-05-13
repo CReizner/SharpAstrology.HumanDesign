@@ -8,7 +8,7 @@ internal static class RootFinder
     private static readonly double PositiveDoublePrecision = 2.0 * DoublePrecision;
     private static readonly double DefaultDoubleAccuracy = DoublePrecision * 10.0;
     
-    public static double FindRoot(Func<double, double> f, double lowerBound, double upperBound, double accuracy = 1E-08, int maxIterations = 1000)
+    public static double FindRoot(Func<double, double> f, double lowerBound, double upperBound, double accuracy = 1E-05, int maxIterations = 100)
     {
         if (!ExpandReduce(f, ref lowerBound, ref upperBound, expansionMaxIterations: maxIterations, reduceSubdivisions: maxIterations * 10))
             throw new Exception("The algorithm has failed, exceeded the number of iterations allowed or there is no root within the provided bounds.");
