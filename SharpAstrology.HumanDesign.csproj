@@ -27,7 +27,7 @@
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="SharpAstrology.Base" Version=">= 0.8.0" />
+      <PackageReference Include="SharpAstrology.Base" Version="[0.8.0,)" />
     </ItemGroup>
     
 </Project>
