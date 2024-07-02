@@ -991,69 +991,6 @@ public static class HumanDesignUtility
         return result;
     }
 
-    // internal static void CalculateState(
-    //     Dictionary<Planets, Activation> personalityActivations1,
-    //     Dictionary<Planets, Activation> designActivations1, 
-    //     Dictionary<Planets, Activation> personalityActivations2,
-    //     Dictionary<Planets, Activation> designActivations2)
-    // {
-    //     foreach (var (_, activation) in personalityActivations1)
-    //     {
-    //         foreach (var harmonicGate in activation.Gate.HarmonicGates())
-    //         {
-    //             activation.FixingState |= _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, personalityActivations1);
-    //             activation.FixingState |= _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, designActivations1);
-    //             var fixingState = _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, personalityActivations2);
-    //             fixingState |= _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, designActivations2);
-    //             if (activation.FixingState.HasFlag(fixingState)) continue;
-    //             activation.FixingState |= fixingState;
-    //             activation.FixingStateChangedByComparer = true;
-    //         }
-    //     }
-    //     
-    //     foreach (var (_, activation) in designActivations1)
-    //     {
-    //         foreach (var harmonicGate in activation.Gate.HarmonicGates())
-    //         {
-    //             activation.FixingState |= _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, personalityActivations1);
-    //             activation.FixingState |= _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, designActivations1);
-    //             var fixingState = _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, personalityActivations2);
-    //             fixingState |= _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, designActivations2);
-    //             if (activation.FixingState.HasFlag(fixingState)) continue;
-    //             activation.FixingState |= fixingState;
-    //             activation.FixingStateChangedByComparer = true;
-    //         }
-    //     }
-    //     
-    //     foreach (var (_, activation) in personalityActivations2)
-    //     {
-    //         foreach (var harmonicGate in activation.Gate.HarmonicGates())
-    //         {
-    //             activation.FixingState |= _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, personalityActivations2);
-    //             activation.FixingState |= _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, designActivations2);
-    //             var fixingState = _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, personalityActivations1);
-    //             fixingState |= _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, designActivations1);
-    //             if (activation.FixingState.HasFlag(fixingState)) continue;
-    //             activation.FixingState |= fixingState;
-    //             activation.FixingStateChangedByComparer = true;
-    //         }
-    //     }
-    //     
-    //     foreach (var (_, activation) in designActivations2)
-    //     {
-    //         foreach (var harmonicGate in activation.Gate.HarmonicGates())
-    //         {
-    //             activation.FixingState |= _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, personalityActivations2);
-    //             activation.FixingState |= _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, designActivations2);
-    //             var fixingState = _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, personalityActivations1);
-    //             fixingState |= _aggregateStateFromHarmonicGate(activation.Gate, activation.Line, harmonicGate, designActivations1);
-    //             if (activation.FixingState.HasFlag(fixingState)) continue;
-    //             activation.FixingState |= fixingState;
-    //             activation.FixingStateChangedByComparer = true;
-    //         }
-    //     }
-    // }
-
     internal static Dictionary<Gates, ActivationTypes> GateActivations(IEnumerable<Gates> gates1, IEnumerable<Gates> gates2)
     {
         var gateActivation = Enum.GetValues<Gates>().ToDictionary(x => x, x => ActivationTypes.None);
@@ -1139,6 +1076,59 @@ public static class HumanDesignUtility
             }
             
             result[channel] = ChannelActivationType.Magnetic;
+        }
+
+        return result;
+    }
+    
+    internal static Dictionary<Centers, ActivationTypes> CenterActivations(
+        Dictionary<Centers, int> connectedComponents, Dictionary<Channels, ChannelActivationType> channelActivations)
+    {
+        var result = new Dictionary<Centers, ActivationTypes>();
+        foreach (var center in Enum.GetValues<Centers>())
+        {
+            if (!connectedComponents.ContainsKey(center))
+            {
+                result[center] = ActivationTypes.None;
+                continue;
+            }
+
+            ActivationTypes? activationType = null;
+            foreach (var channel in center.ConnectedChannels())
+            {
+                if (!channelActivations.TryGetValue(channel, out var activation))
+                {
+                    continue;
+                }
+
+                if (activation == ChannelActivationType.FirstDominating)
+                {
+                    if (activationType == ActivationTypes.SecondComparator)
+                    {
+                        activationType = ActivationTypes.Mixed;
+                        break;
+                    }
+
+                    activationType = ActivationTypes.FirstComparator;
+                    continue;
+                }
+
+                if (activation == ChannelActivationType.SecondDominating)
+                {
+                    if (activationType == ActivationTypes.FirstComparator)
+                    {
+                        activationType = ActivationTypes.Mixed;
+                        break;
+                    }
+                    activationType = ActivationTypes.SecondComparator;
+                    continue;
+                }
+                
+                activationType = ActivationTypes.Mixed;
+                break;
+            }
+
+            result[center] = activationType!.Value;
         }
 
         return result;

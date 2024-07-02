@@ -3,7 +3,7 @@ namespace SharpAstrology.Enums;
 public interface IHumanDesignChart
 {
     /// <summary>
-    /// Gets a dictionary, where gates are mapped to there activation type.
+    /// This dictionary indicates whether and how a gate has been activated.
     /// This property is useful for drawing the body graph.
     /// The value will be calculated on the first call of this property. 
     /// </summary>
@@ -15,6 +15,13 @@ public interface IHumanDesignChart
     /// The value will be calculated on the first call of this property.
     /// </summary>
     public Dictionary<Channels, ChannelActivationType> ChannelActivations { get; }
+
+    /// <summary>
+    /// This dictionary indicates whether and how a center has been activated.
+    /// This property is useful for drawing the body graph.
+    /// The value will be calculated on the first call of this property.
+    /// </summary>
+    public Dictionary<Centers, ActivationTypes> CenterActivations { get; }
     
     /// <summary>
     /// Gets a dictionary of connected components, where each center is associated with its component id.

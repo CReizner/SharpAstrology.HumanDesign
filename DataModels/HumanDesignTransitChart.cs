@@ -67,6 +67,16 @@ public sealed class HumanDesignTransitChart : IHumanDesignChart
         }
     }
 
+    private Dictionary<Centers, ActivationTypes>? _centerActivations;
+    public Dictionary<Centers, ActivationTypes> CenterActivations
+    {
+        get
+        {
+            _centerActivations ??= HumanDesignUtility.CenterActivations(ConnectedComponents, ChannelActivations);
+            return _centerActivations;
+        }
+    }
+
     /// <summary>
     /// Gets a dictionary of connected components, where each center is associated with its components' id.
     /// </summary>

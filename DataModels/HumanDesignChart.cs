@@ -57,14 +57,17 @@ public sealed class HumanDesignChart : IHumanDesignChart
         }
     }
 
-    /// <summary>
-    /// Gets a dictionary of connected components, where each center is associated with its component id.
-    /// </summary>
+    private Dictionary<Centers, ActivationTypes>? _centerActivations;
+    public Dictionary<Centers, ActivationTypes> CenterActivations
+    {
+        get
+        {
+            _centerActivations ??= HumanDesignUtility.CenterActivations(ConnectedComponents, ChannelActivations);
+            return _centerActivations;
+        }
+    }
+
     public Dictionary<Centers, int> ConnectedComponents { get; }
-    
-    /// <summary>
-    /// Gets the number of connected components of the Human Design graph.
-    /// </summary>
     public int Splits { get; }
 
     public SplitDefinitions SplitDefinition => HumanDesignUtility.SplitDefinition(Splits);
