@@ -1,4 +1,6 @@
-namespace SharpAstrology.Enums;
+using SharpAstrology.Enums;
+
+namespace SharpAstrology.Interfaces;
 
 public interface IHumanDesignChart
 {

@@ -1,3 +1,5 @@
 bin
 obj
 .idea
+README.template.md
+push.py
