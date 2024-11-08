@@ -10,7 +10,7 @@ namespace SharpAstrology.Utility;
 public static class HumanDesignUtility
 {
     private const double HdOffsetToZodiac = 3.875;
-    private const double DegreePerGate = 5.626;
+    private const double DegreePerGate = 5.625;
     private const double DegreePerLine = 0.9375;
     private const double DegreePerColor = 0.15625;
     private const double DegreePerTone = DegreePerColor / 6;
