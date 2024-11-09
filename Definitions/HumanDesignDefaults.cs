@@ -12,9 +12,18 @@ public static class HumanDesignDefaults
     /// </summary>
     public static readonly Planets[] HumanDesignPlanets =
     [
-        Planets.Sun, Planets.Earth, Planets.Mars, Planets.Mercury,
-        Planets.Venus, Planets.Moon, Planets.Jupiter, Planets.Saturn, 
-        Planets.Uranus, Planets.Neptune, Planets.Pluto, 
-        Planets.NorthNode, Planets.SouthNode
+        Planets.Sun, 
+				Planets.Earth, 
+        Planets.NorthNode, 
+				Planets.SouthNode,
+				Planets.Moon, 
+				Planets.Mercury,
+        Planets.Uranus, 
+        Planets.Venus, 
+				Planets.Mars, 
+				Planets.Neptune, 
+				Planets.Saturn, 
+				Planets.Jupiter, 
+				Planets.Pluto, 
     ];
 }
