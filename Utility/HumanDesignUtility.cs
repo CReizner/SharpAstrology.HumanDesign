@@ -10,7 +10,7 @@ namespace SharpAstrology.Utility;
 public static class HumanDesignUtility
 {
     private const double HdOffsetToZodiac = 3.875;
-    private const double DegreePerGate = 5.626;
+    private const double DegreePerGate = 5.625;
     private const double DegreePerLine = 0.9375;
     private const double DegreePerColor = 0.15625;
     private const double DegreePerTone = DegreePerColor / 6;
@@ -57,14 +57,18 @@ public static class HumanDesignUtility
     {
         var x = longitude - HdOffsetToZodiac;
         if (x < 0) x += 360;
-            
+						
         return new Activation()
         {
             Gate = (Gates)Math.Floor(x / DegreePerGate),
             Line = (Lines)Math.Floor((x % DegreePerGate) / DegreePerLine) + 1,
             Color = (Color)Math.Floor((x % DegreePerLine) / DegreePerColor) + 1,
             Tone = (Tone)Math.Floor((x % DegreePerColor) / DegreePerTone) + 1,
-            Base = (Base)Math.Floor((x % DegreePerTone) / DegreePerBase) + 1
+            Base = (Base)Math.Floor((x % DegreePerTone) / DegreePerBase) + 1,
+						Longitude = longitude,
+						ColorPercentage = (((x % DegreePerLine) % DegreePerColor) / DegreePerColor) * 100.0,
+						TonePercentage = (((x % DegreePerColor) % DegreePerTone) / DegreePerTone) * 100.0,
+						BasePercentage = (((x % DegreePerTone) % DegreePerBase) / DegreePerBase) * 100.0,
         };
     }
     
