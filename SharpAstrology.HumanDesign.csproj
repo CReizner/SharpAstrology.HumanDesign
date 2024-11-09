@@ -10,7 +10,7 @@
     <PropertyGroup>
         <PackageId>SharpAstrology.HumanDesign</PackageId>
         <PackageTags>Astrology, Human Design</PackageTags>
-        <Version>1.1.0</Version>
+        <Version>1.1.1</Version>
         <Authors>Christian Reizner</Authors>
         <Description>
             This package is part of the SharpAstrology project. 
