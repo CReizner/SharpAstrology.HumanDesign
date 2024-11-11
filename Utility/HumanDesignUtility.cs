@@ -65,10 +65,10 @@ public static class HumanDesignUtility
             Color = (Color)Math.Floor((x % DegreePerLine) / DegreePerColor) + 1,
             Tone = (Tone)Math.Floor((x % DegreePerColor) / DegreePerTone) + 1,
             Base = (Base)Math.Floor((x % DegreePerTone) / DegreePerBase) + 1,
+						ColorPercentage = ((x % DegreePerColor) / DegreePerColor) * 100.0,
+						TonePercentage = ((x % DegreePerTone) / DegreePerTone) * 100.0,
+						BasePercentage = ((x % DegreePerBase) / DegreePerBase) * 100.0,
 						Longitude = longitude,
-						ColorPercentage = (((x % DegreePerLine) % DegreePerColor) / DegreePerColor) * 100.0,
-						TonePercentage = (((x % DegreePerColor) % DegreePerTone) / DegreePerTone) * 100.0,
-						BasePercentage = (((x % DegreePerTone) % DegreePerBase) / DegreePerBase) * 100.0,
         };
     }
     
