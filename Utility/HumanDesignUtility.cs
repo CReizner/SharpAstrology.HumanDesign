@@ -57,14 +57,18 @@ public static class HumanDesignUtility
     {
         var x = longitude - HdOffsetToZodiac;
         if (x < 0) x += 360;
-            
+						
         return new Activation()
         {
             Gate = (Gates)Math.Floor(x / DegreePerGate),
             Line = (Lines)Math.Floor((x % DegreePerGate) / DegreePerLine) + 1,
             Color = (Color)Math.Floor((x % DegreePerLine) / DegreePerColor) + 1,
             Tone = (Tone)Math.Floor((x % DegreePerColor) / DegreePerTone) + 1,
-            Base = (Base)Math.Floor((x % DegreePerTone) / DegreePerBase) + 1
+            Base = (Base)Math.Floor((x % DegreePerTone) / DegreePerBase) + 1,
+						ColorPercentage = ((x % DegreePerColor) / DegreePerColor) * 100.0,
+						TonePercentage = ((x % DegreePerTone) / DegreePerTone) * 100.0,
+						BasePercentage = ((x % DegreePerBase) / DegreePerBase) * 100.0,
+						Longitude = longitude,
         };
     }
     
