@@ -10,5 +10,5 @@ public enum Quarters
 
 public static class QuartersExtensionMethods
 {
-    public static int ToNumber(Quarters quarter) => (int)quarter;
+    public static int ToNumber(this Quarters quarter) => (int)quarter;
 }

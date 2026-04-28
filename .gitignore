@@ -3,3 +3,5 @@ obj
 .idea
 README.template.md
 push.py
+.claude
+.codex

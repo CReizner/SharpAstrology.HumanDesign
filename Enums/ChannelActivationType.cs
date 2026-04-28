@@ -11,7 +11,7 @@ public enum ChannelActivationType
     None,
     
     /// <summary>
-    /// Channel was active and is also activated by the comparer.
+    /// Both comparators activate the channel.
     /// </summary>
     Companion,
     
@@ -21,7 +21,7 @@ public enum ChannelActivationType
     FirstDominating,
     
     /// <summary>
-    /// Channel is activated only by the first comparers.
+    /// Channel is activated only by the second comparers.
     /// </summary>
     SecondDominating,
     

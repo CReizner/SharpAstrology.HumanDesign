@@ -7,6 +7,7 @@ namespace SharpAstrology.ExtensionMethods;
 
 public static class HumanDesignIEphemeridesContextExtensionMethods
 {
+    private const float DesingDegDistance = 88;
     /// <summary>
     /// Calculates the design Julian day for a given birthdate using the provided ephemerides service.
     /// The design Julian day is determined by finding the day when the Sun's position is 88 degrees ahead of the birthdate's Sun position.
@@ -24,8 +25,8 @@ public static class HumanDesignIEphemeridesContextExtensionMethods
         var dateOfBirthJulian = birthdate.ToJulianDate();
         var sunsLongitude = ephService.PlanetsPosition(Planets.Sun, birthdate, mode).Longitude;
         var dateOfIncomingJulian = RootFinder.FindRoot(jd => AstrologyUtility.AngleDifference(
-            AstrologyUtility.SubtractDegree(sunsLongitude, 88),
-            ephService.PlanetsPosition(Planets.Sun, AstrologyUtility.DateTimeFromJulianDate(jd)).Longitude
+            AstrologyUtility.SubtractDegree(sunsLongitude, DesingDegDistance),
+            ephService.PlanetsPosition(Planets.Sun, AstrologyUtility.DateTimeFromJulianDate(jd), mode).Longitude
         ), dateOfBirthJulian - 110, dateOfBirthJulian - 70, maxIterations: 1000);
         
         return AstrologyUtility.DateTimeFromJulianDate(dateOfIncomingJulian);

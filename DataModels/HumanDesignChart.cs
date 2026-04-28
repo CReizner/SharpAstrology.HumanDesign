@@ -1,4 +1,3 @@
-using System.Runtime.InteropServices.JavaScript;
 using SharpAstrology.Interfaces;
 using SharpAstrology.Enums;
 using SharpAstrology.ExtensionMethods;
@@ -12,7 +11,7 @@ namespace SharpAstrology.DataModels;
 /// Represents a Human Design Chart. It utilizes planetary positions and activations
 /// to provide several complex characteristics like Types, Profiles, Strategies, Channels, Gates and Variables.
 /// </summary>
-public sealed class HumanDesignChart : IHumanDesignChart
+public sealed class HumanDesignChart : IHumanDesignChart, IEquatable<HumanDesignChart>
 {
     private readonly HashSet<Gates> _personalityGates;
     private readonly HashSet<Gates> _designGates;
@@ -218,7 +217,6 @@ public sealed class HumanDesignChart : IHumanDesignChart
         DesignActivation = _PlanetActivations(eph, designDate, mode);
         _personalityGates = PersonalityActivation.Values.Select(x => x.Gate).ToHashSet();
         _designGates = DesignActivation.Values.Select(x => x.Gate).ToHashSet();
-        // HumanDesignUtility.CalculateState(PersonalityActivation, DesignActivation);
         (ConnectedComponents, Splits) = GraphService.ConnectedCenters(HumanDesignUtility.ActiveChannels(ActiveGates));
     }
     
@@ -227,29 +225,40 @@ public sealed class HumanDesignChart : IHumanDesignChart
     #region Utility
     
     /// <summary>
-    /// Determines whether the specified <see cref="HumanDesignChart"/> object is equal to the current object,
-    /// considering different levels of comparison depth specified by <see cref="ComparatorDepth"/>.
+    /// Two charts are equal when they activate the same gates on every Human
+    /// Design planet (personality and design) and share the same Sun line on
+    /// both sides — i.e. body graph and profile match.
     /// </summary>
     /// <param name="other">The <see cref="HumanDesignChart"/> object to compare with the current object.</param>
     /// <returns><c>true</c> if the specified object is equal to the current object; otherwise, <c>false</c>.</returns>
     public bool Equals(HumanDesignChart? other)
     {
-        if (ReferenceEquals(null, other)) return false;
+        if (other is null) return false;
         if (ReferenceEquals(this, other)) return true;
-        
-        foreach (var (p,a) in PersonalityActivation)
+
+        foreach (var planet in Definitions.HumanDesignDefaults.HumanDesignPlanets)
         {
-            if (!PersonalityActivation[p].Equals(other.PersonalityActivation[p], ComparatorDepth.Gate)) return false;
-        }
-        foreach (var (p,a) in DesignActivation)
-        {
-            if (!DesignActivation[p].Equals(other.DesignActivation[p], ComparatorDepth.Gate)) return false;
+            if (PersonalityActivation[planet].Gate != other.PersonalityActivation[planet].Gate) return false;
+            if (DesignActivation[planet].Gate != other.DesignActivation[planet].Gate) return false;
         }
 
-        if (PersonalityActivation[Planets.Sun].Line != other.PersonalityActivation[Planets.Sun].Line) return false;
-        if (DesignActivation[Planets.Sun].Line != other.DesignActivation[Planets.Sun].Line) return false;
-        
-        return true;
+        return PersonalityActivation[Planets.Sun].Line == other.PersonalityActivation[Planets.Sun].Line
+            && DesignActivation[Planets.Sun].Line == other.DesignActivation[Planets.Sun].Line;
+    }
+
+    public override bool Equals(object? obj) => obj is HumanDesignChart other && Equals(other);
+
+    public override int GetHashCode()
+    {
+        var hash = new HashCode();
+        foreach (var planet in Definitions.HumanDesignDefaults.HumanDesignPlanets)
+        {
+            hash.Add(PersonalityActivation[planet].Gate);
+            hash.Add(DesignActivation[planet].Gate);
+        }
+        hash.Add(PersonalityActivation[Planets.Sun].Line);
+        hash.Add(DesignActivation[Planets.Sun].Line);
+        return hash.ToHashCode();
     }
 
     /// <summary>
@@ -260,37 +269,42 @@ public sealed class HumanDesignChart : IHumanDesignChart
     /// <param name="eph">An IEphemerides instance providing ephemeris data for astrological calculations.</param>
     /// <param name="mode">An optional EphCalculationMode (defaults to Tropic) specifying the astrological calculation mode.</param>
     /// <returns>A List of tuples, each containing a <see cref="HumanDesignChart"/> and its associated probability, representing the predicted outcomes within the specified time range.</returns>
-    /// <exception cref="ArgumentException">Thrown if start or end DateTime parameters are not in UTC.</exception>
-    public static List<(HumanDesignChart Chart, double Probability)> 
+    /// <exception cref="ArgumentException">Thrown if start or end DateTime parameters are not in UTC, or if end is not strictly after start.</exception>
+    public static List<(HumanDesignChart Chart, double Probability)>
         Guess(DateTime start, DateTime end, IEphemerides eph, EphCalculationMode mode = EphCalculationMode.Tropic)
     {
         if (start.Kind != DateTimeKind.Utc || end.Kind != DateTimeKind.Utc)
             throw new ArgumentException("The parameters must be of kind Utc.");
+        if (end <= start)
+            throw new ArgumentException("end must be strictly after start.", nameof(end));
 
-        var maxDepth = (int)Math.Log2((end - start).TotalMinutes / 10) + 1;
+        // Subdivide until each interval is roughly ~10 minutes wide. Cap the
+        // depth so a wide range can't trigger an exponential number of chart
+        // constructions (each leaf builds a full HumanDesignChart).
+        const int maxAllowedDepth = 12;
+        var maxDepth = Math.Clamp(
+            (int)Math.Ceiling(Math.Log2((end - start).TotalMinutes / 10.0)),
+            0, maxAllowedDepth);
 
-        List<(HumanDesignChart Chart, double Probability)> results = new((int)Math.Pow(2,maxDepth));
-        _guess(results, null, null, start, end, 0, maxDepth, eph, mode);
-        
-        ChartProbability current = null;
-        List<ChartProbability> probs = [];
-        foreach (var result in results)
+        var leaves = new List<(HumanDesignChart Chart, double Probability)>(1 << maxDepth);
+        _guess(leaves, null, null, start, end, 0, maxDepth, eph, mode);
+
+        var aggregated = new List<(HumanDesignChart Chart, double Probability)>();
+        var indexByChart = new Dictionary<HumanDesignChart, int>();
+        foreach (var leaf in leaves)
         {
-            if (current is not null && current.Chart.Equals(result.Chart))
+            if (indexByChart.TryGetValue(leaf.Chart, out var i))
             {
-                current.Probability += result.Probability;
-                continue;
+                aggregated[i] = (aggregated[i].Chart, aggregated[i].Probability + leaf.Probability);
             }
-    
-            current = new ChartProbability()
+            else
             {
-                Chart = result.Chart,
-                Probability = result.Probability
-            };
-            probs.Add(current);
+                indexByChart[leaf.Chart] = aggregated.Count;
+                aggregated.Add(leaf);
+            }
         }
 
-        return probs.Select(x => (x.Chart, x.Probability)).ToList();
+        return aggregated;
     }
     
     #endregion
@@ -468,9 +482,3 @@ public sealed class HumanDesignChart : IHumanDesignChart
 
     #endregion
 }
-
-file sealed class ChartProbability
-{
-    public HumanDesignChart Chart = default!;
-    public double Probability;
-};

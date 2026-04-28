@@ -23,7 +23,7 @@ public static class CentersExtensionMethods
             Centers.Sacral => [Gates.Key27, Gates.Key34, Gates.Key5, Gates.Key14, Gates.Key29, Gates.Key59, Gates.Key9, Gates.Key3, Gates.Key42],
             Centers.Spleen => [Gates.Key18, Gates.Key28, Gates.Key32, Gates.Key50, Gates.Key44, Gates.Key57, Gates.Key48],
             Centers.Emotions => [Gates.Key6, Gates.Key37, Gates.Key22, Gates.Key36, Gates.Key30, Gates.Key55, Gates.Key49],
-            Centers.Heart => [Gates.Key22, Gates.Key40, Gates.Key26, Gates.Key51],
+            Centers.Heart => [Gates.Key21, Gates.Key40, Gates.Key26, Gates.Key51],
             Centers.Self => [Gates.Key1, Gates.Key13, Gates.Key25, Gates.Key46, Gates.Key2, Gates.Key15, Gates.Key10, Gates.Key7],
             Centers.Throat => [Gates.Key20, Gates.Key16, Gates.Key62, Gates.Key23, Gates.Key56, Gates.Key35, Gates.Key12, Gates.Key45, Gates.Key33, Gates.Key8, Gates.Key31],
             Centers.Mind => [Gates.Key43, Gates.Key17, Gates.Key47, Gates.Key24, Gates.Key4, Gates.Key11],
@@ -48,7 +48,7 @@ public static class CentersExtensionMethods
             ],
             Centers.Spleen =>
             [
-                Channels.Key18Key58, Channels.Key28Key38, Channels.Key32Key54, Channels.Key27Key50, Channels.Key27Key50,
+                Channels.Key18Key58, Channels.Key28Key38, Channels.Key32Key54, Channels.Key27Key50,
                 Channels.Key26Key44, Channels.Key10Key57, Channels.Key20Key57, Channels.Key34Key57, Channels.Key16Key48
             ],
             Centers.Emotions =>

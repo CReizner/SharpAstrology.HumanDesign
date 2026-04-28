@@ -1,6 +1,7 @@
 using SharpAstrology.Enums;
 using SharpAstrology.DataModels;
 using SharpAstrology.Definitions;
+using System.Diagnostics;
 
 namespace SharpAstrology.Utility;
 
@@ -77,7 +78,7 @@ public static class HumanDesignUtility
     /// </summary>
     /// <param name="splits">The number of splits.</param>
     /// <returns>The corresponding SplitDefinitions enum.</returns>
-    /// <exception cref="ArgumentException">Thrown when the number of splits is not within the expected range (0-4).</exception>
+    /// <exception cref="UnreachableException">Thrown when the number of splits is not within the expected range (0-4).</exception>
     public static SplitDefinitions SplitDefinition(int splits)
     {
         return splits switch
@@ -87,7 +88,7 @@ public static class HumanDesignUtility
             2 => SplitDefinitions.SplitDefinition,
             3 => SplitDefinitions.TripleSplit,
             4 => SplitDefinitions.QuadrupleSplit,
-            _ => throw new ArgumentException($"To much splits: {splits}")
+            _ => throw new UnreachableException($"To many splits: {splits}")
         };
     }
 

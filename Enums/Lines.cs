@@ -1,5 +1,7 @@
 #pragma warning disable CS8524
 
+using System.Diagnostics;
+
 namespace SharpAstrology.Enums;
 
 public enum Lines
@@ -27,7 +29,7 @@ public static class LinesExtensionMethods
         Lines.Five when line.Item2 == Lines.Two => Profiles.FiveTwo,
         Lines.Six when line.Item2 == Lines.Two => Profiles.SixTwo,
         Lines.Six when line.Item2 == Lines.Three => Profiles.SixThree,
-        _ => throw new Exception($"No Human Design Profile defined for {line.Item1} / {line.Item2}")
+        _ => throw new UnreachableException($"No Human Design Profile defined for {line.Item1} / {line.Item2}")
     };
     
     public static int ToNumber(this Lines line) => line switch
