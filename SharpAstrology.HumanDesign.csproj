@@ -23,11 +23,15 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <None Include="README.md" Pack="true" PackagePath="$(PackageReadmeFile)" CopyToOutputDirectory="Always"/>
+        <None Include="README.md" Pack="true" PackagePath="$(PackageReadmeFile)"/>
     </ItemGroup>
-    
+
+    <!-- The floor is only used in a clone of this repository alone, where the sibling project
+         is missing. Packing from the full working copy takes the version of the referenced
+         project instead, so the floor is kept at the version that project currently has.
+         Both ways then produce the same dependency. -->
     <PropertyGroup>
-        <SharpAstrologyBaseVersion>[0.12.0,)</SharpAstrologyBaseVersion>
+        <SharpAstrologyBaseVersion>[0.13.0,)</SharpAstrologyBaseVersion>
     </PropertyGroup>
 
     <ItemGroup Condition="Exists('..\SharpAstrology.Base\SharpAstrology.Base.csproj')">
